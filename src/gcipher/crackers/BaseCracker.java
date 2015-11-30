@@ -8,15 +8,21 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class BaseCracker {
-	public HashMap<String, Float> quadgrams;
-	public HashMap<String, Float> monograms;
+	private final HashMap<String, Float> quadgrams;
+	private final HashMap<String, Float> monograms;
+	private float quadDefault;
 	
 	public String enc;
+	public String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	public BaseCracker() throws IOException {
 		this.quadgrams = loadQuadgrams();
 		this.monograms = loadMonograms();
+	}
+	public String decrypt(String ct) {
+		return "";
 	}
 
 	public float quadgramScore(String str) {
@@ -24,9 +30,9 @@ public class BaseCracker {
 		int length = str.length();
 		for (int i = 0; i < length - 3; i++) {
 			String thisQuad = str.substring(i, i + 4);
-			fitness += quadgrams.get(thisQuad);
+			Float score = quadgrams.get(thisQuad);
+			fitness += score == null ? quadDefault : score.floatValue();
 		}
-		
 		return fitness;
 	}
 	public float monogramScore(String str) {
@@ -44,14 +50,18 @@ public class BaseCracker {
 		URL url = getClass().getResource("english_quadgrams.txt");
 		File file = new File(url.getPath());
 
+		double sum = 0;
 		List<String> lines = Files.readAllLines(Paths.get(file.getAbsolutePath()));
 
 		HashMap<String, Float> quadgrams = new HashMap<String, Float>();
 		int linelength = lines.size();
 		for (int i = 0; i < linelength; i += 2) {
-			quadgrams.put(lines.get(i), (float) Math.log10(Float.parseFloat(lines.get(i + 1))));
+			float single = Float.parseFloat(lines.get(i + 1));
+			quadgrams.put(lines.get(i), (float) Math.log10(single));
+			sum += single;
 		}
 
+		quadDefault = (float)Math.log10(0.01 / sum);
 		return quadgrams;
 	}
 

@@ -4,18 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class CaesarCracker extends BaseCracker {
-	public CaesarCracker(String str) throws IOException {
-		this.enc = str.toUpperCase().replaceAll("[^A-Z]", "");
+	public CaesarCracker() throws IOException {
 	}
 	
-	public String decrypt() {
-		String bestDec = this.enc;
+	@Override
+	public String decrypt(String ct) {
+		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
+		String bestDec = ct;
 		ArrayList<String> decs = new ArrayList<String>();
 		for (int i = 0; i < 26; i++) {
 			String thisDec = "";
-			int encLength = enc.length();
-			for (int n = 0; n < encLength; n++) {
-				int thisChar = enc.charAt(n);
+			int ctLength = ct.length();
+			for (int n = 0; n < ctLength; n++) {
+				int thisChar = ct.charAt(n);
 				thisChar += i;
 				if (thisChar > 'Z') {
 					thisChar -= 26;

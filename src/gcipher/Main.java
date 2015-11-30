@@ -1,23 +1,38 @@
 package gcipher;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import gcipher.buttons.BaseButton;
 import gcipher.buttons.CaesarButton;
+import gcipher.buttons.MonoalphabeticButton;
+import gcipher.buttons.VigenereButton;
+import gcipher.crackers.BaseCracker;
+import gcipher.crackers.CaesarCracker;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 
 
 
 
-public class Main extends Application {
+public class Main extends Application implements EventHandler<ActionEvent> {
 	
 	Stage window;
 	Scene scene1;
+	BaseCracker cracker;
+	Button crackButton;
+	TextArea input;
+	TextArea output;
+	ArrayList<Button> cipherList = new ArrayList<Button>();
 	
 	
 
@@ -30,44 +45,63 @@ public class Main extends Application {
         window = primaryStage;
         window.setTitle("Gcipher");
         
+        try {
+        	cracker = new CaesarCracker();
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }
         
+        BorderPane layout = new BorderPane();
+        BorderPane mainPanel = new BorderPane();
         
-        VBox masterPanel = new VBox(20);
-        
-        VBox cipherPanel = new VBox(20);
-        
-        
-        TextArea input =  new TextArea();
-        input.getStyleClass().add("inputArea");
+        HBox ioPanel = new HBox();
+        input = new TextArea();
         input.setWrapText(true);
+        output = new TextArea();
+        output.setWrapText(true);
+        HBox.setHgrow(input, Priority.ALWAYS);
+        HBox.setHgrow(output, Priority.ALWAYS);
+        input.setMaxWidth(Double.MAX_VALUE);
+        output.setMaxWidth(Double.MAX_VALUE);
+        ioPanel.getChildren().addAll(input, output);
+        mainPanel.setCenter(ioPanel);
         
-        VBox outputPanel = new VBox(20);
-        TextArea output = new TextArea();
-        outputPanel.getChildren().add(output);
+        HBox buttonPanel = new HBox(3);
+        crackButton = new Button("crack");
+        crackButton.setOnAction(this);
+        crackButton.getStyleClass().add("crackButton");
+        buttonPanel.getChildren().add(crackButton);
+        mainPanel.setTop(buttonPanel);
         
-      //cipher panel
-        ArrayList<Button> cipherList = new ArrayList<Button>();
+        HBox cipherPanel = new HBox(7);
         cipherList.add(new CaesarButton(input));
+        cipherList.add(new MonoalphabeticButton(input));
+        cipherList.add(new VigenereButton(input));
         
-        
-        
-        masterPanel.getChildren().addAll(input);
-        for (Button cipherButton : cipherList) {
-        	cipherPanel.getChildren().add(cipherButton);
+        for (Button button : cipherList) {
+        	button.setOnAction(this);
+        	cipherPanel.getChildren().add(button);
         }
         
         
-
-        
-        BorderPane layout = new BorderPane();
-        layout.setCenter(masterPanel);
-        layout.setLeft(cipherPanel);
-        layout.setRight(outputPanel);
-        
-        
+        layout.setTop(cipherPanel);
+        layout.setCenter(mainPanel);
         scene1 = new Scene(layout);
         scene1.getStylesheets().add("gcipher/master.css");
         window.setScene(scene1);
         window.show();
+    }
+    @Override
+    public void handle(ActionEvent e) {
+    	if (e.getSource() instanceof BaseButton) {
+    		BaseButton source = (BaseButton) e.getSource();
+    		for (Button button : cipherList) {
+    			button.getStyleClass().remove("selected");
+    		}
+    		this.cracker = source.cracker;
+    		source.getStyleClass().add("selected");
+    	} else if (e.getSource() == crackButton) {
+    		output.setText(cracker.decrypt(input.getText()));
+    	}
     }
 }
