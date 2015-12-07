@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class CaesarCracker extends BaseCracker {
 	public CaesarCracker() throws IOException {
+		super();
 	}
 	
 	@Override

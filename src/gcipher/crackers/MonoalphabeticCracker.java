@@ -6,6 +6,7 @@ import java.util.Collections;
 
 public class MonoalphabeticCracker extends BaseCracker {
 	public MonoalphabeticCracker() throws IOException {
+		super();
 	}
 	
 	@Override

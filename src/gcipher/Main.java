@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 import gcipher.buttons.BaseButton;
 import gcipher.buttons.CaesarButton;
+import gcipher.buttons.ColumnTransButton;
 import gcipher.buttons.MonoalphabeticButton;
+import gcipher.buttons.RailfenceButton;
 import gcipher.buttons.VigenereButton;
 import gcipher.crackers.BaseCracker;
 import gcipher.crackers.CaesarCracker;
@@ -75,8 +77,11 @@ public class Main extends Application implements EventHandler<ActionEvent> {
         
         HBox cipherPanel = new HBox(7);
         cipherList.add(new CaesarButton(input));
+        cipherList.get(0).getStyleClass().add("selected");
         cipherList.add(new MonoalphabeticButton(input));
         cipherList.add(new VigenereButton(input));
+        cipherList.add(new ColumnTransButton(input));
+        cipherList.add(new RailfenceButton(input));
         
         for (Button button : cipherList) {
         	button.setOnAction(this);

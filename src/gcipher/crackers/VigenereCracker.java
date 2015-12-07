@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class VigenereCracker extends BaseCracker {
 	public VigenereCracker() throws IOException {
+		super();
 	}
 	
 	@Override
@@ -12,7 +13,7 @@ public class VigenereCracker extends BaseCracker {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 		ArrayList<String> decs = new ArrayList<String>();
 		for (int i = 1; i < 20; i++) {
-			decs.add(bestFromLength(i, ct));
+			decs.add(keyTest(i, ct));
 		}
 		String bestDec = "";
 		int decLength = decs.size();
@@ -49,7 +50,7 @@ public class VigenereCracker extends BaseCracker {
 		}
 		return bestDec;
 	}
-	public String bestFromLength(int length, String ct) {
+	public String keyTest(int length, String ct) {
 		String[] seperated = new String[length];
 		int ctlength = ct.length();
 		for (int i = 0; i < length; i++) {
