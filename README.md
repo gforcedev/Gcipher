@@ -9,3 +9,4 @@ We decipher ciphers with gcipher. Particularly National Cipher Challenge Ciphers
   Mono-alphabetic Sub
   Rail-Fence
   Vigenere
+  Column Transposition (not yet)
