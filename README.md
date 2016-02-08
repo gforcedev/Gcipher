@@ -1,4 +1,4 @@
-# Gcipher
+# Gcipher ![Build Status](https://travis-ci.com/gforcedev/Gcipher.svg?token=w2Ko67N59sgzxrJMpsG6&branch=master)
 We decipher ciphers with gcipher. Particularly National Cipher Challenge Ciphers to decipher with gcipher
 
 # How we work:
