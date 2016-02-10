@@ -7,7 +7,7 @@ public class VigenereCracker extends BaseCracker {
 	public VigenereCracker() throws IOException {
 		super();
 	}
-	
+
 	@Override
 	public String decrypt(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
@@ -24,9 +24,8 @@ public class VigenereCracker extends BaseCracker {
 		}
 		return bestDec;
 	}
-	
-	
-	
+
+
 	public String caesar(String ct) {
 		String bestDec = ct;
 		ArrayList<String> decs = new ArrayList<String>();
@@ -39,7 +38,7 @@ public class VigenereCracker extends BaseCracker {
 				if (thisChar > 'Z') {
 					thisChar -= 26;
 				}
-				thisDec += (char)thisChar;
+				thisDec += (char) thisChar;
 			}
 			decs.add(thisDec);
 		}
@@ -50,14 +49,15 @@ public class VigenereCracker extends BaseCracker {
 		}
 		return bestDec;
 	}
+
 	public String keyTest(int length, String ct) {
 		String[] seperated = new String[length];
 		int ctlength = ct.length();
 		for (int i = 0; i < length; i++) {
 			seperated[i] = "";
 		}
-			
-		
+
+
 		for (int i = 0; i < ctlength; i++) {
 			seperated[i % length] += ct.charAt(i);
 		}
@@ -72,8 +72,8 @@ public class VigenereCracker extends BaseCracker {
 				seperated[i] = seperated[i].substring(1);
 			}
 		}
-		
-		
+
+
 		return toReturn;
 	}
 }

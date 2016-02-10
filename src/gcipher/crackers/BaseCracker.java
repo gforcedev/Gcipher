@@ -13,7 +13,7 @@ public class BaseCracker {
 	private final HashMap<String, Float> quadgrams;
 	private final HashMap<String, Float> monograms;
 	private float quadDefault;
-	
+
 	public String enc;
 	public String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -21,6 +21,7 @@ public class BaseCracker {
 		this.quadgrams = loadQuadgrams();
 		this.monograms = loadMonograms();
 	}
+
 	public String decrypt(String ct) {
 		return "";
 	}
@@ -35,6 +36,7 @@ public class BaseCracker {
 		}
 		return fitness;
 	}
+
 	public float monogramScore(String str) {
 		float fitness = 0;
 		int length = str.length();
@@ -42,7 +44,7 @@ public class BaseCracker {
 			String thisMono = str.substring(i, i + 1);
 			fitness += monograms.get(thisMono);
 		}
-		
+
 		return fitness;
 	}
 
@@ -61,7 +63,7 @@ public class BaseCracker {
 			sum += single;
 		}
 
-		quadDefault = (float)Math.log10(0.01 / sum);
+		quadDefault = (float) Math.log10(0.01 / sum);
 		return quadgrams;
 	}
 

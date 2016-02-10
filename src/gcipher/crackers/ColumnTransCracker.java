@@ -3,10 +3,11 @@ package gcipher.crackers;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ColumnTransCracker extends BaseCracker{
+public class ColumnTransCracker extends BaseCracker {
 	public ColumnTransCracker() throws IOException {
 		super();
 	}
+
 	public String decrypt(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 		ArrayList<String> decs = new ArrayList<String>();
@@ -23,20 +24,20 @@ public class ColumnTransCracker extends BaseCracker{
 		}
 		return bestDec;
 	}
-	
-	
+
+
 	public String keyTest(String ct, int key) {
 		String[] seperated = new String[key];
 		int ctlength = ct.length();
 		for (int i = 0; i < key; i++) {
 			seperated[i] = "";
 		}
-			
-		
+
+
 		for (int i = 0; i < ctlength; i++) {
 			seperated[i % key] += ct.charAt(i);
 		}
-		
+
 		String toReturn = "";
 
 		for (int i = 0; i < key - 1; i++) {

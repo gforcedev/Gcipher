@@ -7,7 +7,7 @@ public class CaesarCracker extends BaseCracker {
 	public CaesarCracker() throws IOException {
 		super();
 	}
-	
+
 	@Override
 	public String decrypt(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
@@ -22,7 +22,7 @@ public class CaesarCracker extends BaseCracker {
 				if (thisChar > 'Z') {
 					thisChar -= 26;
 				}
-				thisDec += (char)thisChar;
+				thisDec += (char) thisChar;
 			}
 			decs.add(thisDec);
 		}

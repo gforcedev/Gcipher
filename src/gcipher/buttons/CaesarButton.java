@@ -1,7 +1,6 @@
 package gcipher.buttons;
 
 
-
 import java.io.IOException;
 
 import gcipher.crackers.CaesarCracker;
