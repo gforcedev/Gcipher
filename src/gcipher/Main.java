@@ -14,6 +14,7 @@ import gcipher.crackers.CaesarCracker;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -69,13 +70,24 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		mainPanel.setCenter(ioPanel);
 
 		HBox buttonPanel = new HBox(3);
+		buttonPanel.setAlignment(Pos.CENTER);
 		crackButton = new Button("crack");
+		crackButton.getStyleClass().add("row2button");
 		crackButton.setOnAction(this);
 		crackButton.getStyleClass().add("crackButton");
 		buttonPanel.getChildren().add(crackButton);
+		keyField = new TextField();
+		keyField.setId("keyField");
+		solveButton = new Button("Decrypt with key");
+		solveButton.setId("solvebutton");
+		solveButton.getStyleClass().add("row2button");
+		solveButton.setOnAction(this);
+		buttonPanel.getChildren().addAll(solveButton, keyField);
 		mainPanel.setTop(buttonPanel);
 
 		HBox cipherPanel = new HBox(7);
+		cipherPanel.setId("cipherpanel");
+		cipherPanel.setAlignment(Pos.BASELINE_CENTER);
 		cipherList.add(new CaesarButton(input));
 		cipherList.get(0).getStyleClass().add("selected");
 		cipherList.add(new MonoalphabeticButton(input));
@@ -87,16 +99,11 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 			button.setOnAction(this);
 			cipherPanel.getChildren().add(button);
 		}
-		HBox bottomPannel = new HBox(2);
-		keyField = new TextField();
-		solveButton = new Button("Decrypt with key");
-		solveButton.setOnAction(this);
-		bottomPannel.getChildren().add(keyField);
+
 
 
 		layout.setTop(cipherPanel);
 		layout.setCenter(mainPanel);
-		layout.setBottom(bottomPannel);
 		scene1 = new Scene(layout);
 		scene1.getStylesheets().add("gcipher/master.css");
 		window.setScene(scene1);
