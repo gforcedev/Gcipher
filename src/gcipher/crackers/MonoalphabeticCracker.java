@@ -53,6 +53,7 @@ public class MonoalphabeticCracker extends BaseCracker {
 		return dec;
 	}
 
+	@Override
 	public String solveWithKey(String ct, String key) { //ct is ciphertext
 		String solved = "";
 		int ctLength = ct.length();

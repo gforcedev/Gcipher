@@ -25,6 +25,7 @@ public class BaseCracker {
 	public String decrypt(String ct) {
 		return "";
 	}
+	public String solveWithKey(String ct, String key) {return "";}
 
 	public float quadgramScore(String str) {
 		float fitness = 0;
