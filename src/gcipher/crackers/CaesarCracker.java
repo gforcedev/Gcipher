@@ -3,7 +3,7 @@ package gcipher.crackers;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CaesarCracker extends BaseCracker {
+public class CaesarCracker extends TextScorer {
 	public CaesarCracker() throws IOException {
 		super();
 	}

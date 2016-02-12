@@ -3,7 +3,7 @@ package gcipher.crackers;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ColumnTransCracker extends BaseCracker {
+public class ColumnTransCracker extends TextScorer {
 	public ColumnTransCracker() throws IOException {
 		super();
 	}

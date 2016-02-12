@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class MonoalphabeticCracker extends BaseCracker {
+public class MonoalphabeticCracker extends TextScorer {
 	public MonoalphabeticCracker() throws IOException {
 		super();
 	}
@@ -13,17 +13,17 @@ public class MonoalphabeticCracker extends BaseCracker {
 	@Override
 	public String decrypt(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		ArrayList<String> decs = new ArrayList<String>();
-		for (int i = 0; i < 5; i++) {
-			decs.add(monoSolveGen(ct));
-		}
 		String bestDec = "";
-		int decLength = decs.size();
-		for (int i = 0; i < decLength; i++) {
-			if (quadgramScore(decs.get(i)) > quadgramScore(bestDec)) {
-				bestDec = decs.get(i);
+		float bestScore = Float.NEGATIVE_INFINITY;
+		for (int i = 0; i < 5; i++) {
+			String thisDec = monoSolveGen(ct);
+			float thisScore = quadgramScore(thisDec);
+			if (thisScore > bestScore) {
+				bestDec = thisDec;
+				bestScore = thisScore;
 			}
 		}
+
 		return bestDec;
 	}
 
@@ -31,16 +31,15 @@ public class MonoalphabeticCracker extends BaseCracker {
 		String parentKey = shuffleString(alphabet);
 
 		int count = 0;
+		float fitness = quadgramScore(solveWithKey(ct, parentKey));
 
 		while (true) {
-			float fitness = quadgramScore(solveWithKey(ct, parentKey));
 			String newKey = swap2(parentKey);
-
 			float newFitness = quadgramScore(solveWithKey(ct, newKey));
 
 			if (newFitness > fitness) {
 				count = 0;
-				fitness = quadgramScore(solveWithKey(ct, newKey));
+				fitness = newFitness;
 				parentKey = newKey;
 			} else {
 				count++;
@@ -55,14 +54,23 @@ public class MonoalphabeticCracker extends BaseCracker {
 
 	@Override
 	public String solveWithKey(String ct, String key) { //ct is ciphertext
-		String solved = "";
+		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
+		key = key.toUpperCase().replaceAll("[^A-Z]", "");
+		if (key.length() < 26) {
+			for (int i = 0; i < 26; i++) {
+				if (!key.contains(alphabet.substring(i, i + 1))) {
+					key += alphabet.substring(i, i + 1);
+				}
+			}
+		}
+		StringBuilder solved = new StringBuilder(ct.length());
 		int ctLength = ct.length();
 
 		for (int i = 0; i < ctLength; i++) {
-			solved += key.charAt(alphabet.indexOf(ct.charAt(i)));
+			solved.append(key.charAt(ct.charAt(i) - 'A'));
 		}
 
-		return solved;
+		return solved.toString();
 	}
 
 	public String shuffleString(String str) {

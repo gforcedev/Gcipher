@@ -8,32 +8,33 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
-
-public class BaseCracker {
-	private final HashMap<String, Float> quadgrams;
+public class TextScorer {
+	private final float[] quadgrams;
 	private final HashMap<String, Float> monograms;
-	private float quadDefault;
 
-	public String enc;
-	public String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-	public BaseCracker() throws IOException {
-		this.quadgrams = loadQuadgrams();
-		this.monograms = loadMonograms();
+	public TextScorer() {
+		try {
+			quadgrams = loadQuadgrams();
+			monograms = loadMonograms();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
+
 
 	public String decrypt(String ct) {
 		return "";
 	}
-	public String solveWithKey(String ct, String key) {return "";}
+
+	public String solveWithKey(String ct, String key) {
+		return "";
+	}
 
 	public float quadgramScore(String str) {
 		float fitness = 0;
 		int length = str.length();
 		for (int i = 0; i < length - 3; i++) {
-			String thisQuad = str.substring(i, i + 4);
-			Float score = quadgrams.get(thisQuad);
-			fitness += score == null ? quadDefault : score.floatValue();
+			fitness += quadgrams[offset(str, i, 4)];
 		}
 		return fitness;
 	}
@@ -49,32 +50,47 @@ public class BaseCracker {
 		return fitness;
 	}
 
-	private HashMap<String, Float> loadQuadgrams() throws IOException {
-		URL url = getClass().getResource("english_quadgrams.txt");
+	private int offset(String text, int offset, int length) {
+		int sum = 0;
+		for (int i = 0; i < length; i++) {
+			sum *= 26;
+			sum += text.charAt(offset + i) - 'A';
+		}
+
+		return sum;
+	}
+
+	private float[] loadQuadgrams() throws IOException {
+		URL url = TextScorer.class.getResource("english_quadgrams.txt");
 		File file = new File(url.getPath());
 
 		double sum = 0;
 		List<String> lines = Files.readAllLines(Paths.get(file.getAbsolutePath()));
+		float[] quadgrams = new float[26 * 26 * 26 * 26];
 
-		HashMap<String, Float> quadgrams = new HashMap<String, Float>();
 		int linelength = lines.size();
 		for (int i = 0; i < linelength; i += 2) {
 			float single = Float.parseFloat(lines.get(i + 1));
-			quadgrams.put(lines.get(i), (float) Math.log10(single));
+			quadgrams[offset(lines.get(i), 0, 4)] = (float) Math.log10(single);
 			sum += single;
 		}
 
-		quadDefault = (float) Math.log10(0.01 / sum);
+		float quadDefault = (float) Math.log10(0.01 / sum);
+
+		for (int i = 0; i < quadgrams.length; i += 2) {
+			if (quadgrams[i] == 0) quadgrams[i] = quadDefault;
+		}
+
 		return quadgrams;
 	}
 
 	public HashMap<String, Float> loadMonograms() throws IOException {
-		URL url = getClass().getResource("english_monograms.txt");
+		URL url = TextScorer.class.getResource("english_monograms.txt");
 		File file = new File(url.getPath());
 
 		List<String> lines = Files.readAllLines(Paths.get(file.getAbsolutePath()));
 
-		HashMap<String, Float> monograms = new HashMap<String, Float>();
+		HashMap<String, Float> monograms = new HashMap<>();
 		int linelength = lines.size();
 		for (int i = 0; i < linelength; i += 2) {
 			monograms.put(lines.get(i), (float) Math.log10(Float.parseFloat(lines.get(i + 1))));

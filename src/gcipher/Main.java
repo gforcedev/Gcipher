@@ -9,7 +9,7 @@ import gcipher.buttons.ColumnTransButton;
 import gcipher.buttons.MonoalphabeticButton;
 import gcipher.buttons.RailfenceButton;
 import gcipher.buttons.VigenereButton;
-import gcipher.crackers.BaseCracker;
+import gcipher.crackers.TextScorer;
 import gcipher.crackers.CaesarCracker;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -17,7 +17,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -30,11 +29,12 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 	Stage window;
 	Scene scene1;
-	BaseCracker cracker;
+	TextScorer cracker;
 	Button crackButton;
 	TextArea input;
 	TextArea output;
-	ArrayList<Button> cipherList = new ArrayList<Button>();
+	ArrayList<Button> cipherList = new ArrayList<>();
+	TextScorer base = new TextScorer();
 	Button solveButton;
 	TextField keyField;
 

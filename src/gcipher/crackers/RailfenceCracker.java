@@ -3,7 +3,7 @@ package gcipher.crackers;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class RailfenceCracker extends BaseCracker {
+public class RailfenceCracker extends TextScorer {
 	public RailfenceCracker() throws IOException {
 		super();
 
@@ -14,7 +14,7 @@ public class RailfenceCracker extends BaseCracker {
 		ArrayList<String> decs = new ArrayList<String>();
 		int ctlength = ct.length();
 		for (int i = 0; i < ctlength / 2; i++) {
-			decs.add(withKey(i, ct));
+			decs.add(solveWithKey(ct, Integer.toString(i)));
 		}
 		String bestDec = "";
 		int decLength = decs.size();
@@ -26,14 +26,20 @@ public class RailfenceCracker extends BaseCracker {
 		return bestDec;
 	}
 
-	public String withKey(int key, String ct) {
-		if (key < 2) {
+	@Override
+	public String solveWithKey(String ct, String key) {
+		key = key.toUpperCase().replaceAll("\\D", "");
+		if (key.length() == 0) {
+			return "Key must be a number";
+		}
+		int intKey = Integer.parseInt(key);
+		if (intKey < 2) {
 			return ct;
 		}
 		int ctlength = ct.length();
 
-		char[][] deca = new char[key][ctlength];
-		for (int i = 0; i < key; i++) {
+		char[][] deca = new char[intKey][ctlength];
+		for (int i = 0; i < intKey; i++) {
 			for (int n = 0; n < deca[i].length; n++) {
 				deca[i][n] = '.';
 			}
@@ -48,10 +54,10 @@ public class RailfenceCracker extends BaseCracker {
 
 			col++;
 			row += dir;
-			dir *= (((row % (key - 1)) == 0) ? -1 : 1);
+			dir *= (((row % (intKey - 1)) == 0) ? -1 : 1);
 		}
 
-		for (row = 0; row < key; row++) {
+		for (row = 0; row < intKey; row++) {
 			for (col = 0; col < ctlength; col++) {
 				if (deca[row][col] == '_') {
 					deca[row][col] = ct.charAt(0);
@@ -73,7 +79,7 @@ public class RailfenceCracker extends BaseCracker {
 			}
 			col++;
 			row += dir;
-			dir *= (((row % (key - 1)) == 0) ? -1 : 1);
+			dir *= (((row % (intKey - 1)) == 0) ? -1 : 1);
 		}
 
 		return dec;
