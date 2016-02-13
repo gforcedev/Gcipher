@@ -1,41 +1,42 @@
 package gcipher.crackers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class MonoalphabeticCracker extends TextScorer {
-	public MonoalphabeticCracker() throws IOException {
-		super();
+public class MonoalphabeticCracker extends Cracker {
+	private final static String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	public MonoalphabeticCracker(TextScorer textScorer) {
+		super(textScorer);
 	}
 
-	@Override
-	public String decrypt(String ct) {
+	public String getKey(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		String bestDec = "";
+		String bestKey = "";
 		float bestScore = Float.NEGATIVE_INFINITY;
 		for (int i = 0; i < 5; i++) {
-			String thisDec = monoSolveGen(ct);
-			float thisScore = quadgramScore(thisDec);
+			String thisKey = monoKeyGen(ct);
+			String thisDec = solveWithKey(ct, thisKey);
+			float thisScore = scorer.quadgramScore(thisDec);
 			if (thisScore > bestScore) {
-				bestDec = thisDec;
 				bestScore = thisScore;
+				bestKey = thisKey;
 			}
 		}
 
-		return bestDec;
+		return bestKey;
 	}
 
-	public String monoSolveGen(String ct) {
+	public String monoKeyGen(String ct) {
 		String parentKey = shuffleString(alphabet);
 
 		int count = 0;
-		float fitness = quadgramScore(solveWithKey(ct, parentKey));
+		float fitness = scorer.quadgramScore(solveWithKey(ct, parentKey));
 
 		while (true) {
 			String newKey = swap2(parentKey);
-			float newFitness = quadgramScore(solveWithKey(ct, newKey));
+			float newFitness = scorer.quadgramScore(solveWithKey(ct, newKey));
 
 			if (newFitness > fitness) {
 				count = 0;
@@ -48,11 +49,10 @@ public class MonoalphabeticCracker extends TextScorer {
 				break;
 			}
 		}
-		String dec = solveWithKey(ct, parentKey);
-		return dec;
+		return parentKey;
 	}
 
-	@Override
+
 	public String solveWithKey(String ct, String key) { //ct is ciphertext
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 		key = key.toUpperCase().replaceAll("[^A-Z]", "");
@@ -74,7 +74,7 @@ public class MonoalphabeticCracker extends TextScorer {
 	}
 
 	public String shuffleString(String str) {
-		ArrayList<Character> list = new ArrayList<Character>();
+		ArrayList<Character> list = new ArrayList<>();
 		for (char c : str.toCharArray()) {
 			list.add(c);
 		}

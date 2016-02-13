@@ -1,32 +1,27 @@
 package gcipher.crackers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-public class RailfenceCracker extends TextScorer {
-	public RailfenceCracker() throws IOException {
-		super();
-
+public class RailfenceCracker extends Cracker {
+	public RailfenceCracker(TextScorer textScorer) {
+		super(textScorer);
 	}
 
-	public String decrypt(String ct) {
+	public String getKey(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		ArrayList<String> decs = new ArrayList<String>();
 		int ctlength = ct.length();
-		for (int i = 0; i < ctlength / 2; i++) {
-			decs.add(solveWithKey(ct, Integer.toString(i)));
-		}
-		String bestDec = "";
-		int decLength = decs.size();
-		for (int i = 0; i < decLength; i++) {
-			if (quadgramScore(decs.get(i)) > quadgramScore(bestDec)) {
-				bestDec = decs.get(i);
+
+		float bestScore = Float.NEGATIVE_INFINITY;
+		int bestKey = 1;
+		for (int i = 0; i < ctlength / 2; i++) { //thiskey is i
+			String thisDec = solveWithKey(ct, Integer.toString(i));
+			float thisScore = scorer.quadgramScore(thisDec);
+			if (thisScore > bestScore) {
+				bestKey = i;
 			}
 		}
-		return bestDec;
+
+		return Integer.toString(bestKey);
 	}
 
-	@Override
 	public String solveWithKey(String ct, String key) {
 		key = key.toUpperCase().replaceAll("\\D", "");
 		if (key.length() == 0) {

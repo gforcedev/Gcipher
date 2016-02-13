@@ -1,16 +1,8 @@
 package gcipher;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import gcipher.buttons.BaseButton;
-import gcipher.buttons.CaesarButton;
-import gcipher.buttons.ColumnTransButton;
-import gcipher.buttons.MonoalphabeticButton;
-import gcipher.buttons.RailfenceButton;
-import gcipher.buttons.VigenereButton;
+import gcipher.buttons.*;
+import gcipher.crackers.Cracker;
 import gcipher.crackers.TextScorer;
-import gcipher.crackers.CaesarCracker;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,19 +16,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 
 public class Main extends Application implements EventHandler<ActionEvent> {
 
-	Stage window;
-	Scene scene1;
-	TextScorer cracker;
-	Button crackButton;
-	TextArea input;
-	TextArea output;
-	ArrayList<Button> cipherList = new ArrayList<>();
-	TextScorer base = new TextScorer();
-	Button solveButton;
-	TextField keyField;
+	private Stage window;
+	private Scene scene1;
+	private Cracker cracker;
+	private Button crackButton;
+	private TextArea input;
+	private TextArea output;
+	private ArrayList<BaseButton> cipherList = new ArrayList<>();
+	private TextScorer scorer;
+	private Button solveButton;
+	private TextField keyField;
 
 
 	public static void main(String[] args) {
@@ -47,12 +41,6 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 	public void start(Stage primaryStage) throws Exception {
 		window = primaryStage;
 		window.setTitle("Gcipher");
-
-		try {
-			cracker = new CaesarCracker();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		BorderPane layout = new BorderPane();
 		BorderPane mainPanel = new BorderPane();
@@ -88,12 +76,18 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		HBox cipherPanel = new HBox(7);
 		cipherPanel.setId("cipherpanel");
 		cipherPanel.setAlignment(Pos.BASELINE_CENTER);
-		cipherList.add(new CaesarButton(input));
+		try {
+			scorer = new TextScorer();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		cipherList.add(new CaesarButton(input, scorer));
 		cipherList.get(0).getStyleClass().add("selected");
-		cipherList.add(new MonoalphabeticButton(input));
-		cipherList.add(new VigenereButton(input));
-		cipherList.add(new ColumnTransButton(input));
-		cipherList.add(new RailfenceButton(input));
+		cracker = cipherList.get(0).cracker;
+		cipherList.add(new MonoalphabeticButton(input, scorer));
+		cipherList.add(new VigenereButton(input, scorer));
+		cipherList.add(new ColumnTransButton(input, scorer));
+		cipherList.add(new RailfenceButton(input, scorer));
 
 		for (Button button : cipherList) {
 			button.setOnAction(this);
@@ -117,10 +111,12 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 			for (Button button : cipherList) {
 				button.getStyleClass().remove("selected");
 			}
-			this.cracker = source.cracker;
+			cracker = source.cracker;
 			source.getStyleClass().add("selected");
 		} else if (e.getSource() == crackButton) {
-			output.setText(cracker.decrypt(input.getText()));
+			String key = cracker.getKey(input.getText());
+			keyField.setText(key);
+			output.setText(cracker.solveWithKey(input.getText(), key));
 		} else if (e.getSource() == solveButton) {
 			output.setText(cracker.solveWithKey(input.getText(), keyField.getText()));
 		}

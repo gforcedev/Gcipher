@@ -1,28 +1,31 @@
 package gcipher.crackers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class ColumnTransCracker extends TextScorer {
-	public ColumnTransCracker() throws IOException {
-		super();
+public class ColumnTransCracker extends Cracker {
+	public ColumnTransCracker(TextScorer textScorer) {
+		super(textScorer);
 	}
 
-	public String decrypt(String ct) {
+	public String getKey(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		ArrayList<String> decs = new ArrayList<String>();
+		ArrayList<String> decs = new ArrayList<>();
 		for (int i = 2; i < Math.floor(ct.length() / 2); i++) {
 			decs.add(keyTest(ct, i));
 			System.out.println(keyTest(ct, i));
 		}
 		String bestDec = "";
-		int decLength = decs.size();
-		for (int i = 0; i < decLength; i++) {
-			if (quadgramScore(decs.get(i)) > quadgramScore(bestDec)) {
-				bestDec = decs.get(i);
+		for (String dec : decs) {
+			if (scorer.quadgramScore(dec) > scorer.quadgramScore(bestDec)) {
+				bestDec = dec;
 			}
 		}
 		return bestDec;
+	}
+
+	@Override
+	public String solveWithKey(String key, String ct) {
+		return "";
 	}
 
 

@@ -1,62 +1,36 @@
 package gcipher.crackers;
 
-import javafx.scene.control.TextField;
+public class VigenereCracker extends Cracker {
+	private CaesarCracker caesar;
+	private final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-public class VigenereCracker  {
-	private final TextScorer scorer;
 	public VigenereCracker(TextScorer textScorer) {
-		scorer = textScorer;
+		super(textScorer);
+		caesar = new CaesarCracker(textScorer);
 	}
 
 
-	public String decrypt(String ct) {
+	public String getKey(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		ArrayList<String> decs = new ArrayList<>();
-		for (int i = 1; i < 20; i++) {
-			decs.add(keyTest(i, ct));
-		}
-		String bestDec = "";
-		for (String dec : decs) {
-			if (scorer.quadgramScore(dec) > scorer.quadgramScore(bestDec)) {
-				bestDec = dec;
-			}
-		}
-		return bestDec;
-	}
-
-
-	public String caesar(String ct) {
-		String bestDec = null;
+		String bestKey = "";
 		float bestScore = Float.NEGATIVE_INFINITY;
+		for (int i = 2; i < 20; i++) {
+			String thisKey = keyTest(i, ct);
+			String thisDec = solveWithKey(ct, thisKey);
+			float thisScore = scorer.quadgramScore(thisDec);
 
-		for (int i = 0; i < 26; i++) {
-			int ctLength = ct.length();
-			char[] characters = new char[ctLength];
-			for (int n = 0; n < ctLength; n++) {
-				int thisChar = ct.charAt(n);
-				thisChar += i;
-				if (thisChar > 'Z') {
-					thisChar -= 26;
-				}
-				characters[i] = (char) thisChar;
-			}
-
-			String thisDec = new String(characters);
-			float thisScore = scorer.monogramScore(thisDec);
 			if (thisScore > bestScore) {
-				bestDec = thisDec;
 				bestScore = thisScore;
+				bestKey = thisKey;
 			}
 		}
-
-		return bestDec;
+		return bestKey;
 	}
+
 
 	public String keyTest(int length, String ct) {
 		String[] seperated = new String[length];
+		char[] key = new char[length];
 		int ctlength = ct.length();
 		for (int i = 0; i < length; i++) {
 			seperated[i] = "";
@@ -67,23 +41,33 @@ public class VigenereCracker  {
 			seperated[i % length] += ct.charAt(i);
 		}
 		for (int i = 0; i < length; i++) {
-			seperated[i] = caesar(seperated[i]);
+			String keyi = caesar.getKey(seperated[i]);
+			key[i] = alphabet.charAt(Integer.parseInt(keyi));
 		}
-		String toReturn = "";
+		StringBuilder toReturn = new StringBuilder();
 
-		while (seperated[length - 1].length() > 0) {
-			for (int i = 0; i < length; i++) {
-				toReturn += seperated[i].charAt(0);
-				seperated[i] = seperated[i].substring(1);
-			}
+		for (int i = 0; i < length; i++) {
+			toReturn.append(key[i]);
 		}
 
 
-		return toReturn;
+		return toReturn.toString();
 	}
 
 
 	public String solveWithKey(String ct, String key) {
-		return "";
+		key = key.toUpperCase().replaceAll("[^A-Z]", "");
+		char[] ctArray = ct.toCharArray();
+		char[] keyArray = key.toCharArray();
+		StringBuilder dec = new StringBuilder();
+
+		for (int i = 0; i < ctArray.length; i++) {
+			ctArray[i] -= keyArray[i % keyArray.length] - 'A';
+			if (ctArray[i] < 'A') {
+				ctArray[i] += 26;
+			}
+			dec.append(ctArray[i]);
+		}
+		return dec.toString();
 	}
 }

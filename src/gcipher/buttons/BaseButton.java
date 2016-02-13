@@ -1,17 +1,14 @@
 package gcipher.buttons;
 
-import java.io.IOException;
-
-import gcipher.crackers.TextScorer;
+import gcipher.crackers.Cracker;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 
 public class BaseButton extends Button {
 	public final TextArea input;
-	public TextScorer cracker;
+	public Cracker cracker;
 
-	public BaseButton(TextArea input) throws IOException {
+	public BaseButton(TextArea input) {
 		this.input = input;
-		this.cracker = new TextScorer();
 	}
 }

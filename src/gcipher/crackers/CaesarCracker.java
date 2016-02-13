@@ -1,34 +1,30 @@
 package gcipher.crackers;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-public class CaesarCracker extends TextScorer {
-	public CaesarCracker() throws IOException {
-		super();
+public class CaesarCracker extends Cracker {
+	public CaesarCracker(TextScorer textScorer) {
+		super(textScorer);
 	}
 
-	@Override
-	public String decrypt(String ct) {
+	public String getKey(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		String bestDec = ct;
-		ArrayList<String> decs = new ArrayList<String>();
+		int bestKey = 0;
+		float bestScore = Float.NEGATIVE_INFINITY;
 		for (int i = 0; i < 26; i++) {
-			decs.add(solveWithKey(ct, Integer.toString(i)));
-		}
-		for (String thisDec : decs) {
-			if (monogramScore(thisDec) > monogramScore(bestDec)) {
-				bestDec = thisDec;
+			String thisDec = solveWithKey(ct, Integer.toString(i));
+			float thisScore = scorer.monogramScore(thisDec);
+			if (thisScore > bestScore) {
+				bestScore = thisScore;
+				bestKey = i;
 			}
 		}
-		return bestDec;
+
+		return Integer.toString(bestKey);
 	}
 
-	@Override
 	public String solveWithKey(String ct, String key) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 		try {
-			int intKey = Integer.parseInt(key);
+			int i = Integer.parseInt(key);
 		} catch (Exception e) {
 			return "key should be a number smaller that 26";
 		}
@@ -43,9 +39,9 @@ public class CaesarCracker extends TextScorer {
 
 		for (int n = 0; n < ctLength; n++) {
 			int thisChar = ct.charAt(n);
-			thisChar += intKey;
-			if (thisChar > 'Z') {
-				thisChar -= 26;
+			thisChar -= intKey;
+			if (thisChar < 'A') {
+				thisChar += 26;
 			}
 			dec += (char) thisChar;
 		}
