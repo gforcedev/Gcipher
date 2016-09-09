@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Gcipher.iml" filepath="$PROJECT_DIR$/Gcipher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ciphercrackers.iml" filepath="$PROJECT_DIR$/ciphercrackers.iml" />
     </modules>
   </component>
 </project>

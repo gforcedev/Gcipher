@@ -13,6 +13,9 @@ public class MonoalphabeticCracker extends Cracker {
 
 	public String getKey(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
+		if (ct.length() > 500) {
+			ct = ct.substring(0,500);
+		}
 		String bestKey = "";
 		float bestScore = Float.NEGATIVE_INFINITY;
 		for (int i = 0; i < 5; i++) {

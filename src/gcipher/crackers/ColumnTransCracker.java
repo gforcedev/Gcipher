@@ -24,7 +24,7 @@ public class ColumnTransCracker extends Cracker {
 	}
 
 	@Override
-	public String solveWithKey(String key, String ct) {
+	public String solveWithKey(String ct, String key) {
 		return "";
 	}
 

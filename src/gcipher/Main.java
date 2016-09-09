@@ -116,7 +116,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		} else if (e.getSource() == crackButton) {
 			String key = cracker.getKey(input.getText());
 			keyField.setText(key);
-			output.setText(cracker.solveWithKey(key, input.getText()));
+			output.setText(cracker.solveWithKey(input.getText(), key));
 		} else if (e.getSource() == solveButton) {
 			output.setText(cracker.solveWithKey(keyField.getText(), input.getText()));
 		}
