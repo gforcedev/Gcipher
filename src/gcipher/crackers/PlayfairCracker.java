@@ -24,7 +24,7 @@ public class PlayfairCracker extends Cracker {
 				}
 			}
 		}
-		return null;
+		return new int[] {0, 0};
 	}
 
 	@Override
