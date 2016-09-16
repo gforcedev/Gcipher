@@ -88,6 +88,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		cipherList.add(new VigenereButton(input, scorer));
 		cipherList.add(new ColumnTransButton(input, scorer));
 		cipherList.add(new RailfenceButton(input, scorer));
+		cipherList.add(new PlayfairButton(input, scorer));
 
 		for (Button button : cipherList) {
 			button.setOnAction(this);
