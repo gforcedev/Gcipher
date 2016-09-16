@@ -56,7 +56,15 @@ public class PlayfairCracker extends Cracker {
 		if (ct.length() %2 != 0) {
 			ct = ct + "X";
 		}
-		if
+		String[] ctArray = new String[ct.length() / 2];
+		String current = "";
+		for (int i = 0; i < ct.length(); i++) {
+			current = current + ct.charAt(i);
+			if (current.length() == 2) {
+				ctArray[(i - 1) / 2] = current;
+				current = "";
+			}
+		}
 
 		return null;
 	}
