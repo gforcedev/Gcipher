@@ -16,6 +16,17 @@ public class PlayfairCracker extends Cracker {
 		return text.replaceFirst("(?s)"+regex+"(?!.*?"+regex+")", replacement);
 	}
 
+	private int[] gridFind(char[][] grid, char toFind) {
+		for (int x = 0; x < 5; x++){
+			for (int y = 0; y < 5; y++) {
+				if (grid[x][y] == toFind) {
+					return(new int[] {x,y});
+				}
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String getKey(String ct) {
 		return null;
@@ -49,6 +60,8 @@ public class PlayfairCracker extends Cracker {
 			}
 		}
 
+
+		// all for ciphertext bigrams
 		for (char c : ct.toCharArray()) {
 			key = key.replaceAll("" + c + c, "" + c + "X" + c);
 		}
@@ -65,6 +78,15 @@ public class PlayfairCracker extends Cracker {
 				current = "";
 			}
 		}
+
+		int[] a = new int[2];
+		int[] b = new int[2];
+
+		for (String s : ctArray) {
+			a = gridFind(keySquare, s.charAt(1));
+		}
+
+
 
 		return null;
 	}
