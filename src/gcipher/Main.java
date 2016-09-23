@@ -119,7 +119,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 			keyField.setText(key);
 			output.setText(cracker.solveWithKey(input.getText(), key));
 		} else if (e.getSource() == solveButton) {
-			output.setText(cracker.solveWithKey(keyField.getText(), input.getText()));
+			output.setText(cracker.solveWithKey(input.getText(), keyField.getText()));
 		}
 	}
 }
