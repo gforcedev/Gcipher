@@ -67,28 +67,25 @@ public class PlayfairCracker extends Cracker {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "").replaceAll("J","I");
 
 		String parentKey = shuffleString(alphabet);
+		float parentFitness = scorer.quadgramScore(solveWithKey(ct, parentKey));
 
-		int count = 0;
-		float fitness = scorer.quadgramScore(solveWithKey(ct, parentKey));
+		for(int TEMP = 10; TEMP >= 0; TEMP = TEMP - 1) {
+			for (int count = 50000; count > 0; count--) {
+				String newKey = swap2(parentKey);
+				float newFitness = scorer.quadgramScore(solveWithKey(ct, newKey));
 
-		while (true) {
-			String newKey = swap2(parentKey);
-			float newFitness = scorer.quadgramScore(solveWithKey(ct, newKey));
-			for(int TEMP = 10; TEMP >= 0; TEMP = TEMP - 1) {
-
-			}
-
-			if (newFitness > fitness) {
-				count = 0;
-				fitness = newFitness;
-				parentKey = newKey;
-			} else {
-				count++;
-			}
-			if (count > 1000) {
-				break;
+				float dF = newFitness - parentFitness;
+				if (dF > 0) {
+					parentKey = newKey;
+				} else {
+					float prob = (float) Math.pow(2.71828f, (dF / TEMP));
+					if(prob > 1.0*Math.random()) {
+						parentKey = newKey;
+					}
+				}
 			}
 		}
+
 		return parentKey;
 	}
 

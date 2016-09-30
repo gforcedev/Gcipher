@@ -59,10 +59,11 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 		HBox buttonPanel = new HBox(3);
 		buttonPanel.setAlignment(Pos.CENTER);
+		buttonPanel.getStyleClass().add("card");
 		crackButton = new Button("crack");
-		crackButton.getStyleClass().add("row2button");
+		crackButton.getStyleClass().add("button-raised");
 		crackButton.setOnAction(this);
-		crackButton.getStyleClass().add("crackButton");
+		crackButton.getStyleClass().add("button-raised");
 		buttonPanel.getChildren().add(crackButton);
 		keyField = new TextField();
 		keyField.setId("keyField");
@@ -74,7 +75,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		mainPanel.setTop(buttonPanel);
 
 		HBox cipherPanel = new HBox(7);
-		cipherPanel.setId("cipherpanel");
+		cipherPanel.getStyleClass().add("card");
 		cipherPanel.setAlignment(Pos.BASELINE_CENTER);
 		try {
 			scorer = new TextScorer();
@@ -92,6 +93,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 		for (Button button : cipherList) {
 			button.setOnAction(this);
+			button.getStyleClass().add("button-flat");
 			cipherPanel.getChildren().add(button);
 		}
 

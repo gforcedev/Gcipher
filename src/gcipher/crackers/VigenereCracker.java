@@ -62,6 +62,7 @@ public class VigenereCracker extends Cracker {
 
 	private String solveInternal(String ct, String key) {
 		key = key.toUpperCase().replaceAll("[^A-Z]", "");
+		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 
 		char[] ctArray = ct.toCharArray();
 		char[] keyArray = key.toCharArray();
