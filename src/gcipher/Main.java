@@ -128,4 +128,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 			output.setText(cracker.solveWithKey(input.getText(), keyField.getText()));
 		}
 	}
+
+	void setCss(String css) {
+		scene1.getStylesheets().add(css);
+	}
 }
