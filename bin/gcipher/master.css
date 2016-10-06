@@ -1,31 +1,31 @@
 .root {
-	-fx-background-color: #F48FB1;
+	-fx-background-color: #303030;
 }
 
 
 .text-area{
-    -fx-background-color: #F48FB1, #F48FB1;
+    -fx-background-color: #303030, #303030;
     -fx-text-fill: #FFF;
     -fx-font-size: 12pt;
 }
 
 .text-area .content {
-	-fx-background-color: #E91E63;
+	-fx-background-color: #424242;
 }
 
 #keyField {
-	-fx-background-color: #E91E63;
+	-fx-background-color: #424242;
 	-fx-text-fill: #FFF;
 	-fx-border-color: #FFF;
 	-fx-border-width: 2;
 }
 
 #cipherpanel {
-	-fx-background-color: #E91E63;
+	-fx-background-color: #424242;
 }
 
 .button {
-	-fx-background-color: #F48FB1;
+	-fx-background-color: #303030;
 	-fx-text-fill: #FFF;
 	-fx-padding : 15 8;
 	-fx-font-weight: bold;
@@ -35,7 +35,7 @@
 	-fx-border-width: 0 0 4 0;
 }
 .button:hover {
-	-fx-background-color: #E91E63;
+	-fx-background-color: #424242;
 	-fx-text-fill: #FFF;
 	-fx-padding : 15 8;
 	-fx-font-weight: bold;
@@ -45,18 +45,18 @@
 	-fx-border-width: 0 0 4 0;
 }
 .button:pressed {
-	-fx-background-color: #E91E63;
+	-fx-background-color: #424242;
 	-fx-text-fill: #FFF;
 	-fx-padding : 15 8;
 	-fx-font-weight: bold;
 	-fx-background-radius: 0px;
 
-	-fx-border-color: #F44336;
+	-fx-border-color: #00FFB6;
 	-fx-border-width: 0 0 4 0;
 	-fx-padding: 15 8;
 }
 .button.selected {
-	-fx-background-color: #F48FB1;
+	-fx-background-color: #303030;
 	-fx-text-fill: #FFF;
 	-fx-padding : 15 8;
 	-fx-font-weight: bold;
