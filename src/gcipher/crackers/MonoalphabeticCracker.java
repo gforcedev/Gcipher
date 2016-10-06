@@ -31,7 +31,7 @@ public class MonoalphabeticCracker extends Cracker {
 		return bestKey;
 	}
 
-	public String monoKeyGen(String ct) {
+	private String monoKeyGen(String ct) {
 		String parentKey = shuffleString(alphabet);
 
 		int count = 0;
@@ -76,7 +76,7 @@ public class MonoalphabeticCracker extends Cracker {
 		return solved.toString();
 	}
 
-	public String shuffleString(String str) {
+	private String shuffleString(String str) {
 		ArrayList<Character> list = new ArrayList<>();
 		for (char c : str.toCharArray()) {
 			list.add(c);
@@ -89,11 +89,11 @@ public class MonoalphabeticCracker extends Cracker {
 		return shuffled;
 	}
 
-	int myRand(int min, int max) {
+	private int myRand(int min, int max) {
 		return (int) Math.floor(Math.random() * (max - min + 1) + min);
 	}
 
-	String swap2(String str) {
+	private String swap2(String str) {
 		char[] c = str.toCharArray();
 		int a = myRand(0, c.length - 1);
 		int b = myRand(0, c.length - 1);
