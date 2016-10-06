@@ -60,17 +60,22 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		HBox buttonPanel = new HBox(3);
 		buttonPanel.setAlignment(Pos.CENTER);
 		buttonPanel.getStyleClass().add("card");
+
 		crackButton = new Button("crack");
 		crackButton.getStyleClass().add("button-raised");
 		crackButton.setOnAction(this);
 		crackButton.getStyleClass().add("button-raised");
 		buttonPanel.getChildren().add(crackButton);
+
 		keyField = new TextField();
 		keyField.setId("keyField");
+		keyField.setMinWidth(500.0);
+
 		solveButton = new Button("Decrypt with key");
 		solveButton.setId("solvebutton");
 		solveButton.getStyleClass().add("row2button");
 		solveButton.setOnAction(this);
+
 		buttonPanel.getChildren().addAll(solveButton, keyField);
 		mainPanel.setTop(buttonPanel);
 
@@ -96,7 +101,6 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 			button.getStyleClass().add("button-flat");
 			cipherPanel.getChildren().add(button);
 		}
-
 
 
 		layout.setTop(cipherPanel);
