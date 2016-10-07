@@ -3,6 +3,9 @@ package gcipher;
 import gcipher.buttons.*;
 import gcipher.crackers.Cracker;
 import gcipher.crackers.TextScorer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,7 +17,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
@@ -28,6 +33,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 	private TextArea input;
 	private TextArea output;
 	private ArrayList<BaseButton> cipherList = new ArrayList<>();
+	private Rectangle rect;
 	private TextScorer scorer;
 	private Button solveButton;
 	private TextField keyField;
@@ -58,7 +64,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		mainPanel.setCenter(ioPanel);
 
 		HBox buttonPanel = new HBox(3);
-		buttonPanel.setAlignment(Pos.CENTER);
+		buttonPanel.setAlignment(Pos.TOP_LEFT);
 		buttonPanel.getStyleClass().add("card");
 
 		crackButton = new Button("crack");
@@ -67,28 +73,27 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		crackButton.getStyleClass().add("button-raised");
 		buttonPanel.getChildren().add(crackButton);
 
-		keyField = new TextField();
-		keyField.setId("keyField");
-		keyField.setMinWidth(500.0);
-
 		solveButton = new Button("Decrypt with key");
 		solveButton.setId("solvebutton");
 		solveButton.getStyleClass().add("row2button");
 		solveButton.setOnAction(this);
+
+		keyField = new TextField();
+		keyField.setId("keyField");
+		keyField.setMinWidth(500.0);
 
 		buttonPanel.getChildren().addAll(solveButton, keyField);
 		mainPanel.setTop(buttonPanel);
 
 		HBox cipherPanel = new HBox(7);
 		cipherPanel.getStyleClass().add("card");
-		cipherPanel.setAlignment(Pos.BASELINE_CENTER);
+		cipherPanel.setAlignment(Pos.TOP_LEFT);
 		try {
 			scorer = new TextScorer();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		cipherList.add(new CaesarButton(input, scorer));
-		cipherList.get(0).getStyleClass().add("selected");
 		cracker = cipherList.get(0).cracker;
 		cipherList.add(new MonoalphabeticButton(input, scorer));
 		cipherList.add(new VigenereButton(input, scorer));
@@ -98,28 +103,54 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 		for (Button button : cipherList) {
 			button.setOnAction(this);
-			button.getStyleClass().add("button-flat");
 			cipherPanel.getChildren().add(button);
 		}
 
-
 		layout.setTop(cipherPanel);
 		layout.setCenter(mainPanel);
+
+		rect = new Rectangle();
+		rect.setX(cipherList.get(0).getTranslateX());
+		rect.setY(42); //46 down, minus the 4 height
+		rect.setWidth(cipherList.get(0).getWidth());
+		rect.setHeight(4);
+		rect.setId("rectangleTop");
+
+		layout.getChildren().add(rect);
 		scene1 = new Scene(layout);
 		scene1.getStylesheets().add("gcipher/master.css");
 		window.setScene(scene1);
 		window.show();
+
+		Timeline timeline = new Timeline();
+		timeline.getKeyFrames().addAll(
+				new KeyFrame(new Duration(350),
+						new KeyValue(rect.translateXProperty(), cipherList.get(0).getLayoutX() + 100),
+						new KeyValue(rect.widthProperty(), cipherList.get(0).getWidth() - 40)
+				),
+				new KeyFrame(new Duration(700),
+						new KeyValue(rect.translateXProperty(), cipherList.get(0).getLayoutX()),
+						new KeyValue(rect.widthProperty(), cipherList.get(0).getWidth())
+				));
+		// play animation
+		timeline.play();
 	}
 
 	@Override
 	public void handle(ActionEvent e) {
 		if (e.getSource() instanceof BaseButton) {
 			BaseButton source = (BaseButton) e.getSource();
-			for (Button button : cipherList) {
-				button.getStyleClass().remove("selected");
-			}
+
+			Timeline timeline = new Timeline();
+			timeline.getKeyFrames().addAll(
+			new KeyFrame(new Duration(400),
+					new KeyValue(rect.translateXProperty(), source.getLayoutX()),
+					new KeyValue(rect.widthProperty(), source.getWidth())
+			));
+			// play animation
+			timeline.play();
+
 			cracker = source.cracker;
-			source.getStyleClass().add("selected");
 		} else if (e.getSource() == crackButton) {
 			String key = cracker.getKey(input.getText());
 			keyField.setText(key);
