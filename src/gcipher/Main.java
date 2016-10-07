@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -33,7 +34,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 	private TextArea input;
 	private TextArea output;
 	private ArrayList<BaseButton> cipherList = new ArrayList<>();
-	private Rectangle rect;
+	private Rectangle selectedRect;
+	private Rectangle buttonRect;
 	private TextScorer scorer;
 	private Button solveButton;
 	private TextField keyField;
@@ -109,14 +111,19 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		layout.setTop(cipherPanel);
 		layout.setCenter(mainPanel);
 
-		rect = new Rectangle();
-		rect.setX(cipherList.get(0).getTranslateX());
-		rect.setY(42); //46 down, minus the 4 height
-		rect.setWidth(cipherList.get(0).getWidth());
-		rect.setHeight(4);
-		rect.setId("rectangleTop");
+		selectedRect = new Rectangle();
+		selectedRect.setX(cipherList.get(0).getTranslateX());
+		selectedRect.setY(42); //46 down, minus the 4 height
+		selectedRect.setWidth(cipherList.get(0).getWidth());
+		selectedRect.setHeight(4);
+		selectedRect.setId("rectangleTop");
+		buttonRect = new Rectangle();
+		buttonRect.setY(0);
+		buttonRect.setHeight(46);
+		buttonRect.setId("buttonRect");
 
-		layout.getChildren().add(rect);
+		layout.getChildren().add(selectedRect);
+		layout.getChildren().add(buttonRect);
 		scene1 = new Scene(layout);
 		scene1.getStylesheets().add("gcipher/master.css");
 		window.setScene(scene1);
@@ -124,13 +131,9 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 		Timeline timeline = new Timeline();
 		timeline.getKeyFrames().addAll(
-				new KeyFrame(new Duration(350),
-						new KeyValue(rect.translateXProperty(), cipherList.get(0).getLayoutX() + 100),
-						new KeyValue(rect.widthProperty(), cipherList.get(0).getWidth() - 40)
-				),
 				new KeyFrame(new Duration(700),
-						new KeyValue(rect.translateXProperty(), cipherList.get(0).getLayoutX()),
-						new KeyValue(rect.widthProperty(), cipherList.get(0).getWidth())
+						new KeyValue(selectedRect.translateXProperty(), cipherList.get(0).getLayoutX()),
+						new KeyValue(selectedRect.widthProperty(), cipherList.get(0).getWidth())
 				));
 		// play animation
 		timeline.play();
@@ -143,20 +146,101 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 			Timeline timeline = new Timeline();
 			timeline.getKeyFrames().addAll(
-			new KeyFrame(new Duration(400),
-					new KeyValue(rect.translateXProperty(), source.getLayoutX()),
-					new KeyValue(rect.widthProperty(), source.getWidth())
+			new KeyFrame(new Duration(450),
+					new KeyValue(selectedRect.translateXProperty(), source.getLayoutX()),
+					new KeyValue(selectedRect.widthProperty(), source.getWidth())
 			));
 			// play animation
 			timeline.play();
 
+			Timeline timeline2 = new Timeline();
+			timeline2.getKeyFrames().addAll(
+					new KeyFrame(new Duration(0),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 0),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					),
+					new KeyFrame(new Duration(300),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
+							new KeyValue(buttonRect.translateYProperty(), 0),
+							new KeyValue(buttonRect.widthProperty(), source.getWidth())
+					),
+					new KeyFrame(new Duration(301),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 0),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					));
+			// play animation
+			timeline2.play();
+
 			cracker = source.cracker;
 		} else if (e.getSource() == crackButton) {
-			String key = cracker.getKey(input.getText());
-			keyField.setText(key);
-			output.setText(cracker.solveWithKey(input.getText(), key));
+			Button source = (Button) e.getSource();
+			Timeline timeline2 = new Timeline();
+			timeline2.getKeyFrames().addAll(
+					new KeyFrame(new Duration(0),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					),
+					new KeyFrame(new Duration(300),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), source.getWidth())
+					),
+					new KeyFrame(new Duration(301),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					));
+			// play animation
+			timeline2.play();
+
+			if (input.getText().length() == 0) {
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				alert.setTitle("Gcipher information");
+				alert.setHeaderText(null);
+				alert.setContentText("No Ciphertext!");
+				alert.showAndWait();
+			} else {
+				try {
+					String key = cracker.getKey(input.getText());
+					keyField.setText(key);
+					output.setText(cracker.solveWithKey(input.getText(), key));
+				} catch (Exception ex) {
+					Alert alert = new Alert(Alert.AlertType.INFORMATION);
+					alert.setTitle("Gcipher information");
+					alert.setHeaderText(null);
+					alert.setContentText("Error:\n" + ex.getLocalizedMessage());
+					alert.showAndWait();
+				}
+			}
 		} else if (e.getSource() == solveButton) {
-			output.setText(cracker.solveWithKey(input.getText(), keyField.getText()));
+			Button source = (Button) e.getSource();
+			Timeline timeline2 = new Timeline();
+			timeline2.getKeyFrames().addAll(
+					new KeyFrame(new Duration(0),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					),
+					new KeyFrame(new Duration(300),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), source.getWidth())
+					),
+					new KeyFrame(new Duration(301),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					));
+			// play animation
+			timeline2.play();
+			try {
+				output.setText(cracker.solveWithKey(input.getText(), keyField.getText()));
+			} catch (Exception ex) {
+				output.setText("An error occured.");
+			}
 		}
 	}
 

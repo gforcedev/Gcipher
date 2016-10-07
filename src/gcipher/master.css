@@ -59,3 +59,7 @@
 #rectangleTop {
 	-fx-fill: #76FF03;
 }
+
+#buttonRect {
+	-fx-fill: rgba(255, 255, 255, 0.2);
+}
