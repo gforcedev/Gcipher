@@ -38,6 +38,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 	private Rectangle buttonRect;
 	private TextScorer scorer;
 	private Button solveButton;
+	private Button reverseButton;
 	private TextField keyField;
 
 
@@ -80,6 +81,10 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		solveButton.getStyleClass().add("row2button");
 		solveButton.setOnAction(this);
 
+		reverseButton = new Button("Reverse output");
+		reverseButton.setOnAction(this);
+		buttonPanel.getChildren().add(reverseButton);
+
 		keyField = new TextField();
 		keyField.setId("keyField");
 		keyField.setMinWidth(500.0);
@@ -110,8 +115,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 		layout.setTop(cipherPanel);
 		layout.setCenter(mainPanel);
-
-		selectedRect = new Rectangle();
+		selectedRect
+		 = new Rectangle();
 		selectedRect.setX(cipherList.get(0).getTranslateX());
 		selectedRect.setY(42); //46 down, minus the 4 height
 		selectedRect.setWidth(cipherList.get(0).getWidth());
@@ -120,6 +125,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		buttonRect = new Rectangle();
 		buttonRect.setY(0);
 		buttonRect.setHeight(46);
+		buttonRect.setArcWidth(20);
+		buttonRect.setArcHeight(300);
 		buttonRect.setId("buttonRect");
 
 		layout.getChildren().add(selectedRect);
@@ -131,7 +138,17 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 
 		Timeline timeline = new Timeline();
 		timeline.getKeyFrames().addAll(
-				new KeyFrame(new Duration(700),
+				new KeyFrame(new Duration(0),
+						new KeyValue(input.maxHeightProperty(), 0),
+						new KeyValue(output.maxHeightProperty(), 0)
+					),
+				new KeyFrame(new Duration(300),
+						new KeyValue(selectedRect.translateXProperty(), cipherList.get(0).getLayoutX() + 100),
+						new KeyValue(selectedRect.widthProperty(), cipherList.get(0).getWidth() - 3),
+						new KeyValue(input.maxHeightProperty(), 300),
+						new KeyValue(output.maxHeightProperty(), 300)
+				),
+				new KeyFrame(new Duration(500),
 						new KeyValue(selectedRect.translateXProperty(), cipherList.get(0).getLayoutX()),
 						new KeyValue(selectedRect.widthProperty(), cipherList.get(0).getWidth())
 				));
@@ -160,12 +177,12 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 							new KeyValue(buttonRect.translateYProperty(), 0),
 							new KeyValue(buttonRect.widthProperty(), 0)
 					),
-					new KeyFrame(new Duration(300),
+					new KeyFrame(new Duration(250),
 							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
 							new KeyValue(buttonRect.translateYProperty(), 0),
 							new KeyValue(buttonRect.widthProperty(), source.getWidth())
 					),
-					new KeyFrame(new Duration(301),
+					new KeyFrame(new Duration(251),
 							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
 							new KeyValue(buttonRect.translateYProperty(), 0),
 							new KeyValue(buttonRect.widthProperty(), 0)
@@ -241,6 +258,34 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 			} catch (Exception ex) {
 				output.setText("An error occured.");
 			}
+		} else if (e.getSource() == reverseButton) {
+			Button source = (Button) e.getSource();
+			Timeline timeline2 = new Timeline();
+			timeline2.getKeyFrames().addAll(
+					new KeyFrame(new Duration(0),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					),
+					new KeyFrame(new Duration(300),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), source.getWidth())
+					),
+					new KeyFrame(new Duration(301),
+							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+							new KeyValue(buttonRect.translateYProperty(), 47),
+							new KeyValue(buttonRect.widthProperty(), 0)
+					));
+			// play animation
+			timeline2.play();
+
+			String unreversed = output.getText();
+			StringBuilder reversed = new StringBuilder();
+			for (int i = unreversed.length() - 1; i >= 0; i--) {
+				reversed.append(unreversed.charAt(i));
+			}
+			output.setText(reversed.toString());
 		}
 	}
 
