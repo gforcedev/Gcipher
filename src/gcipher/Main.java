@@ -67,8 +67,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		mainPanel.setCenter(ioPanel);
 
 		HBox buttonPanel = new HBox(3);
-		buttonPanel.setAlignment(Pos.TOP_LEFT);
-		buttonPanel.getStyleClass().add("card");
+		buttonPanel.setAlignment(Pos.CENTER);
+		buttonPanel.getStyleClass().add("buttonPanel");
 
 		crackButton = new Button("crack");
 		crackButton.getStyleClass().add("button-raised");
@@ -80,6 +80,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		solveButton.setId("solvebutton");
 		solveButton.getStyleClass().add("row2button");
 		solveButton.setOnAction(this);
+		buttonPanel.getChildren().add(solveButton);
 
 		reverseButton = new Button("Reverse output");
 		reverseButton.setOnAction(this);
@@ -88,8 +89,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		keyField = new TextField();
 		keyField.setId("keyField");
 		keyField.setMinWidth(500.0);
+		buttonPanel.getChildren().add(keyField);
 
-		buttonPanel.getChildren().addAll(solveButton, keyField);
 		mainPanel.setTop(buttonPanel);
 
 		HBox cipherPanel = new HBox(7);
@@ -136,6 +137,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		window.setScene(scene1);
 		window.show();
 
+		//the startup animation
 		Timeline timeline = new Timeline();
 		timeline.getKeyFrames().addAll(
 				new KeyFrame(new Duration(0),
@@ -160,58 +162,12 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 	public void handle(ActionEvent e) {
 		if (e.getSource() instanceof BaseButton) {
 			BaseButton source = (BaseButton) e.getSource();
+			selectAnimation(source);
 
-			Timeline timeline = new Timeline();
-			timeline.getKeyFrames().addAll(
-			new KeyFrame(new Duration(450),
-					new KeyValue(selectedRect.translateXProperty(), source.getLayoutX()),
-					new KeyValue(selectedRect.widthProperty(), source.getWidth())
-			));
-			// play animation
-			timeline.play();
-
-			Timeline timeline2 = new Timeline();
-			timeline2.getKeyFrames().addAll(
-					new KeyFrame(new Duration(0),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 0),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					),
-					new KeyFrame(new Duration(250),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
-							new KeyValue(buttonRect.translateYProperty(), 0),
-							new KeyValue(buttonRect.widthProperty(), source.getWidth())
-					),
-					new KeyFrame(new Duration(251),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 0),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					));
-			// play animation
-			timeline2.play();
 
 			cracker = source.cracker;
 		} else if (e.getSource() == crackButton) {
-			Button source = (Button) e.getSource();
-			Timeline timeline2 = new Timeline();
-			timeline2.getKeyFrames().addAll(
-					new KeyFrame(new Duration(0),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					),
-					new KeyFrame(new Duration(300),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), source.getWidth())
-					),
-					new KeyFrame(new Duration(301),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					));
-			// play animation
-			timeline2.play();
+			animation2((Button) e.getSource());
 
 			if (input.getText().length() == 0) {
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -233,52 +189,14 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 				}
 			}
 		} else if (e.getSource() == solveButton) {
-			Button source = (Button) e.getSource();
-			Timeline timeline2 = new Timeline();
-			timeline2.getKeyFrames().addAll(
-					new KeyFrame(new Duration(0),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					),
-					new KeyFrame(new Duration(300),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), source.getWidth())
-					),
-					new KeyFrame(new Duration(301),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					));
-			// play animation
-			timeline2.play();
+			animation2((Button) e.getSource());
 			try {
 				output.setText(cracker.solveWithKey(input.getText(), keyField.getText()));
 			} catch (Exception ex) {
 				output.setText("An error occured.");
 			}
 		} else if (e.getSource() == reverseButton) {
-			Button source = (Button) e.getSource();
-			Timeline timeline2 = new Timeline();
-			timeline2.getKeyFrames().addAll(
-					new KeyFrame(new Duration(0),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					),
-					new KeyFrame(new Duration(300),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), source.getWidth())
-					),
-					new KeyFrame(new Duration(301),
-							new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
-							new KeyValue(buttonRect.translateYProperty(), 47),
-							new KeyValue(buttonRect.widthProperty(), 0)
-					));
-			// play animation
-			timeline2.play();
+			animation2((Button) e.getSource());
 
 			String unreversed = output.getText();
 			StringBuilder reversed = new StringBuilder();
@@ -289,7 +207,56 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		}
 	}
 
-	void setCss(String css) {
-		scene1.getStylesheets().add(css);
+	void selectAnimation(Button source) {
+		Timeline timeline = new Timeline();
+		timeline.getKeyFrames().addAll(
+				new KeyFrame(new Duration(450),
+						new KeyValue(selectedRect.translateXProperty(), source.getLayoutX()),
+						new KeyValue(selectedRect.widthProperty(), source.getWidth())
+				));
+		// play animation
+		timeline.play();
+
+		Timeline timeline2 = new Timeline();
+		timeline2.getKeyFrames().addAll(
+				new KeyFrame(new Duration(0),
+						new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+						new KeyValue(buttonRect.translateYProperty(), 0),
+						new KeyValue(buttonRect.widthProperty(), 0)
+				),
+				new KeyFrame(new Duration(250),
+						new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
+						new KeyValue(buttonRect.translateYProperty(), 0),
+						new KeyValue(buttonRect.widthProperty(), source.getWidth())
+				),
+				new KeyFrame(new Duration(251),
+						new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+						new KeyValue(buttonRect.translateYProperty(), 0),
+						new KeyValue(buttonRect.widthProperty(), 0)
+				));
+		// play animation
+		timeline2.play();
+	}
+
+	void animation2(Button source) {
+		Timeline timeline2 = new Timeline();
+		timeline2.getKeyFrames().addAll(
+				new KeyFrame(new Duration(0),
+						new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+						new KeyValue(buttonRect.translateYProperty(), 47),
+						new KeyValue(buttonRect.widthProperty(), 0)
+				),
+				new KeyFrame(new Duration(300),
+						new KeyValue(buttonRect.translateXProperty(), source.getLayoutX()),
+						new KeyValue(buttonRect.translateYProperty(), 47),
+						new KeyValue(buttonRect.widthProperty(), source.getWidth())
+				),
+				new KeyFrame(new Duration(301),
+						new KeyValue(buttonRect.translateXProperty(), source.getLayoutX() + source.getWidth() / 2),
+						new KeyValue(buttonRect.translateYProperty(), 47),
+						new KeyValue(buttonRect.widthProperty(), 0)
+				));
+		// play animation
+		timeline2.play();
 	}
 }
