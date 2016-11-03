@@ -13,7 +13,7 @@ An automated cipher cracking program.
   Column Transposition (not yet)
 
 # ALL RIGHTS RESERVED
-  © Gfocedev 2016
+  © Gforcedev 2016
    
    
   You may not use this code or functionally equivalent statements to crack ANY ciphers from a current National Cipher Challenge
