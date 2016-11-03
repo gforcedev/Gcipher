@@ -65,7 +65,7 @@ public class TextScorer {
 		File file = new File(url.getPath());
 
 		double sum = 0;
-		List<String> lines = Files.readAllLines(Paths.get(file.getAbsolutePath()));
+		List<String> lines = Files.readAllLines(Paths.get("english_quadgrams.txt"));
 		float[] quadgrams = new float[26 * 26 * 26 * 26];
 
 		int linelength = lines.size();
@@ -88,7 +88,7 @@ public class TextScorer {
 		URL url = TextScorer.class.getResource("english_monograms.txt");
 		File file = new File(url.getPath());
 
-		List<String> lines = Files.readAllLines(Paths.get(file.getAbsolutePath()));
+		List<String> lines = Files.readAllLines(Paths.get("english_monograms.txt"));
 
 		HashMap<String, Float> monograms = new HashMap<>();
 		int linelength = lines.size();
