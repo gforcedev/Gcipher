@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_ciphercrackers" default="compile.module.ciphercrackers">
+  <dirname property="module.ciphercrackers.basedir" file="${ant.file.module_ciphercrackers}"/>
+  
+  <property name="module.jdk.home.ciphercrackers" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.ciphercrackers" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.ciphercrackers" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.ciphercrackers" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="ciphercrackers.output.dir" value="${module.ciphercrackers.basedir}/bin"/>
+  <property name="ciphercrackers.testoutput.dir" value="${module.ciphercrackers.basedir}/bin"/>
+  
+  <path id="ciphercrackers.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ciphercrackers.module.production.classpath">
+    <path refid="${module.jdk.classpath.ciphercrackers}"/>
+  </path>
+  
+  <path id="ciphercrackers.runtime.production.module.classpath">
+    <pathelement location="${ciphercrackers.output.dir}"/>
+  </path>
+  
+  <path id="ciphercrackers.module.classpath">
+    <pathelement location="${ciphercrackers.output.dir}"/>
+    <path refid="${module.jdk.classpath.ciphercrackers}"/>
+  </path>
+  
+  <path id="ciphercrackers.runtime.module.classpath">
+    <pathelement location="${ciphercrackers.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ciphercrackers">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ciphercrackers">
+    <patternset refid="excluded.from.module.ciphercrackers"/>
+  </patternset>
+  
+  <path id="ciphercrackers.module.sourcepath">
+    <dirset dir="${module.ciphercrackers.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.ciphercrackers" depends="compile.module.ciphercrackers.production,compile.module.ciphercrackers.tests" description="Compile module ciphercrackers"/>
+  
+  <target name="compile.module.ciphercrackers.production" depends="register.custom.compilers" description="Compile module ciphercrackers; production classes">
+    <mkdir dir="${ciphercrackers.output.dir}"/>
+    <javac2 destdir="${ciphercrackers.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.ciphercrackers}/javac">
+      <compilerarg line="${compiler.args.ciphercrackers}"/>
+      <bootclasspath refid="ciphercrackers.module.bootclasspath"/>
+      <classpath refid="ciphercrackers.module.production.classpath"/>
+      <src refid="ciphercrackers.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ciphercrackers"/>
+    </javac2>
+    
+    <copy todir="${ciphercrackers.output.dir}">
+      <fileset dir="${module.ciphercrackers.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.ciphercrackers.tests" depends="register.custom.compilers,compile.module.ciphercrackers.production" description="compile module ciphercrackers; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.ciphercrackers" description="cleanup module">
+    <delete dir="${ciphercrackers.output.dir}"/>
+    <delete dir="${ciphercrackers.testoutput.dir}"/>
+  </target>
+</project>

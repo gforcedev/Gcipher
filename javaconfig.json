@@ -1,0 +1,5 @@
+{
+    "sourcePath": ["src/gcipher"],
+    "classPathFile": ".classpath",
+    "outputDirectory": "out"
+}

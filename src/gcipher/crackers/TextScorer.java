@@ -98,4 +98,28 @@ public class TextScorer {
 
 		return monograms;
 	}
+
+	private float[] loadNgrams() {
+		URL url = TextScorer.class.getResource("english_quadgrams.txt");
+		File file = new File(url.getPath());
+
+		double sum = 0;
+		List<String> lines = Files.readAllLines(Paths.get("english_quadgrams.txt"));
+		float[] quadgrams = new float[26 * 26 * 26 * 26];
+
+		int linelength = lines.size();
+		for (int i = 0; i < linelength; i += 2) {
+			float single = Float.parseFloat(lines.get(i + 1));
+			quadgrams[offset(lines.get(i), 0, 4)] = (float) Math.log10(single);
+			sum += single;
+		}
+
+		float quadDefault = (float) Math.log10(0.01 / sum);
+
+		for (int i = 0; i < quadgrams.length; i += 2) {
+			if (quadgrams[i] == 0) quadgrams[i] = quadDefault;
+		}
+
+		return quadgrams;
+	}
 }
