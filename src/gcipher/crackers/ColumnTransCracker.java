@@ -29,7 +29,7 @@ public class ColumnTransCracker extends Cracker {
 	}
 
 
-	public String keyTest(String ct, int key) {
+	public int[] keyTest(String ct, int key) {
 		String[] seperated = new String[key];
 		int ctlength = ct.length();
 		for (int i = 0; i < key; i++) {
@@ -41,14 +41,12 @@ public class ColumnTransCracker extends Cracker {
 			seperated[i % key] += ct.charAt(i);
 		}
 
-		String toReturn = "";
-
-		for (int i = 0; i < key - 1; i++) {
-			while (seperated[i].length() > 0) {
-				toReturn += seperated[i].charAt(0);
-				seperated[i] = seperated[i].substring(1);
-			}
+		int[] toReturn = new int[key];
+		for (int i = 0; i < key; i++) {
+			toReturn[i] = i;
 		}
-		return toReturn;
+
+
+		return null;
 	}
 }
