@@ -11,11 +11,16 @@ import java.util.List;
 public class TextScorer {
 	private final float[] quadgrams;
 	private final HashMap<String, Float> monograms;
+	private String[] oneWords;
+	private long[] oneWordProbs;
+	private String[] twoWords;
+	private long[] twoWordProbs;
 
 	public TextScorer() {
 		try {
 			quadgrams = loadQuadgrams();
 			monograms = loadMonograms();
+			loadOneWords();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -99,27 +104,22 @@ public class TextScorer {
 		return monograms;
 	}
 
-	private float[] loadNgrams() {
-		URL url = TextScorer.class.getResource("english_quadgrams.txt");
+	public void loadOneWords() throws IOException {
+		URL url = TextScorer.class.getResource("1WordScores.txt");
 		File file = new File(url.getPath());
 
-		double sum = 0;
-		List<String> lines = Files.readAllLines(Paths.get("english_quadgrams.txt"));
-		float[] quadgrams = new float[26 * 26 * 26 * 26];
+		List<String> lines = Files.readAllLines(Paths.get("1WordScores.txt"));
 
 		int linelength = lines.size();
-		for (int i = 0; i < linelength; i += 2) {
-			float single = Float.parseFloat(lines.get(i + 1));
-			quadgrams[offset(lines.get(i), 0, 4)] = (float) Math.log10(single);
-			sum += single;
+		String[] words = new String[linelength / 2];
+		long[] probabilities = new long[linelength / 2];
+
+		for (int i = 0; i < linelength - 1; i++) {
+			words[i] = lines.get(i * 2);
+			probabilities[i] = Long.parseLong(lines.get(i * 2 + 1));
 		}
 
-		float quadDefault = (float) Math.log10(0.01 / sum);
-
-		for (int i = 0; i < quadgrams.length; i += 2) {
-			if (quadgrams[i] == 0) quadgrams[i] = quadDefault;
-		}
-
-		return quadgrams;
+		oneWords = words;
+		oneWordProbs = probabilities;
 	}
 }

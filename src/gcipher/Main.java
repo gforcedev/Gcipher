@@ -1,5 +1,6 @@
 package gcipher;
 
+import gcipher.Utils.WordGuesser;
 import gcipher.buttons.*;
 import gcipher.crackers.Cracker;
 import gcipher.crackers.TextScorer;
@@ -39,7 +40,9 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 	private TextScorer scorer;
 	private Button solveButton;
 	private Button reverseButton;
+	private Button spaceButton;
 	private TextField keyField;
+	private WordGuesser wordGuesser;
 
 
 	public static void main(String[] args) {
@@ -85,6 +88,10 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		reverseButton = new Button("Reverse output");
 		reverseButton.setOnAction(this);
 		buttonPanel.getChildren().add(reverseButton);
+
+		spaceButton = new Button("Insert Spaces");
+		spaceButton.setOnAction(this);
+		buttonPanel.getChildren().add(spaceButton);
 
 		keyField = new TextField();
 		keyField.setId("keyField");
@@ -204,6 +211,14 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 				reversed.append(unreversed.charAt(i));
 			}
 			output.setText(reversed.toString());
+		} else if (e.getSource() == spaceButton) {
+			animation2((Button)e.getSource());
+
+			try {
+				output.setText(wordGuesser.guess(output.getText()));
+			} catch (Exception ex) {
+				output.setText("An error occured.");
+			}
 		}
 	}
 
