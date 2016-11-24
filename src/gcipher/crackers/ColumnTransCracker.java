@@ -11,7 +11,7 @@ public class ColumnTransCracker extends Cracker {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 		ArrayList<String> decs = new ArrayList<>();
 		for (int i = 2; i < Math.floor(ct.length() / 2); i++) {
-			decs.add(keyTest(ct, i));
+//			decs.add(keyTest(ct, i));
 			System.out.println(keyTest(ct, i));
 		}
 		String bestDec = "";

@@ -20,7 +20,7 @@ public class TextScorer {
 		try {
 			quadgrams = loadQuadgrams();
 			monograms = loadMonograms();
-			loadOneWords();
+//			loadOneWords();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

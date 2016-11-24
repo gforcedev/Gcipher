@@ -12,18 +12,23 @@ public class VigenereCracker extends Cracker {
 
 	public String getKey(String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
+		if (ct.length() > 500) {
+			ct = ct.substring(0,500);
+		}
 		String bestKey = "";
 		float bestScore = Float.NEGATIVE_INFINITY;
-		for (int i = 2; i < 20; i++) {
-			String thisKey = keyTest(i, ct);
-			String thisDec = solveInternal(thisKey, ct);
-			float thisScore = scorer.quadgramScore(thisDec);
-
-			if (thisScore > bestScore) {
-				bestScore = thisScore;
-				bestKey = thisKey;
+		for (int i = 0; i < 5; i++) {
+			for (int keyLength = 2; keyLength < 20; keyLength++) {
+				String thisKey = keyTest(keyLength, ct);
+				String thisDec = solveWithKey(ct, thisKey);
+				float thisScore = scorer.quadgramScore(thisDec);
+				if (thisScore > bestScore) {
+					bestScore = thisScore;
+					bestKey = thisKey;
+				}
 			}
 		}
+
 		return bestKey;
 	}
 
