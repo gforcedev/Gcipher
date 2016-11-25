@@ -20,7 +20,8 @@ public class TextScorer {
 		try {
 			quadgrams = loadQuadgrams();
 			monograms = loadMonograms();
-//			loadOneWords();
+			loadOneWords();
+			loadTwoWords();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -114,12 +115,32 @@ public class TextScorer {
 		String[] words = new String[linelength / 2];
 		long[] probabilities = new long[linelength / 2];
 
-		for (int i = 0; i < linelength - 1; i++) {
+		for (int i = 0; i < (linelength / 2); i++) {
 			words[i] = lines.get(i * 2);
 			probabilities[i] = Long.parseLong(lines.get(i * 2 + 1));
 		}
 
 		oneWords = words;
 		oneWordProbs = probabilities;
+	}
+
+	public void loadTwoWords() throws IOException {
+		URL url = TextScorer.class.getResource("2WordScores.txt");
+		File file = new File(url.getPath());
+
+		List<String> lines = Files.readAllLines(Paths.get("2WordScores.txt"));
+
+		int linelength = lines.size();
+		String[] words = new String[linelength / 2];
+		long[] probabilities = new long[linelength / 2];
+
+		for (int i = 0; i < (linelength / 2); i++) {
+			words[i] = lines.get(i * 2);
+			System.out.println(i);
+			probabilities[i] = Long.parseLong(lines.get(i * 2 + 1));
+		}
+
+		twoWords = words;
+		twoWordProbs = probabilities;
 	}
 }
