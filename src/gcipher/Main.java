@@ -115,6 +115,7 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		cipherList.add(new ColumnTransButton(input, scorer));
 		cipherList.add(new RailfenceButton(input, scorer));
 		cipherList.add(new PlayfairButton(input, scorer));
+		cipherList.add(new HillButton(input, scorer));
 
 		for (Button button : cipherList) {
 			button.setOnAction(this);

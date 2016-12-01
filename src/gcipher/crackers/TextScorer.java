@@ -136,7 +136,6 @@ public class TextScorer {
 
 		for (int i = 0; i < (linelength / 2); i++) {
 			words[i] = lines.get(i * 2);
-			System.out.println(i);
 			probabilities[i] = Long.parseLong(lines.get(i * 2 + 1));
 		}
 
