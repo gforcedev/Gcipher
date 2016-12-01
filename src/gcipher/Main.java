@@ -194,6 +194,8 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 					alert.setHeaderText(null);
 					alert.setContentText("Error:\n" + ex.getLocalizedMessage());
 					alert.showAndWait();
+
+					ex.printStackTrace();
 				}
 			}
 		} else if (e.getSource() == solveButton) {
