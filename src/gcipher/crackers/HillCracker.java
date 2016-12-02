@@ -12,6 +12,7 @@ import java.util.Optional;
  */
 public class HillCracker extends Cracker {
 	private final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 	public HillCracker(TextScorer textScorer) {
 		super(textScorer);
 	}
@@ -39,7 +40,7 @@ public class HillCracker extends Cracker {
 			ct += "Z";
 		}
 		String[] ctArray = new String[ct.length() / 2];
-		for (int i = 0; i < ct.length(); i+= 2) {
+		for (int i = 0; i < ct.length(); i += 2) {
 			ctArray[i / 2] = "" + ct.charAt(i) + ct.charAt(i + 1);
 		}
 
@@ -48,37 +49,53 @@ public class HillCracker extends Cracker {
 		String bestDec = "";
 
 		for (int i = 0; i < ct.length() - 5; i++) {
-		Matrix key = null;
-		if (i % 2 == 0) {
-			 Matrix matrixA = new Basic2DMatrix(new double[][]{
-					 {alphabet.indexOf(crib.charAt(0)), alphabet.indexOf(crib.charAt(2))},
-					 {alphabet.indexOf(crib.charAt(1)), alphabet.indexOf(crib.charAt(3))}
-			 });
+			Matrix key = null;
+			if (i % 2 == 0) {
+				Matrix matrixA = new Basic2DMatrix(new double[][]{
+						{alphabet.indexOf(crib.charAt(0)), alphabet.indexOf(crib.charAt(2))},
+						{alphabet.indexOf(crib.charAt(1)), alphabet.indexOf(crib.charAt(3))}
+				});
 
-			Matrix matrixB = new Basic2DMatrix(new double[][]{
-					{alphabet.indexOf(ctArray[i / 2].charAt(0)), alphabet.indexOf(ctArray[i / 2 + 1].charAt(0))},
-					{alphabet.indexOf(ctArray[i / 2].charAt(1)), alphabet.indexOf(ctArray[i / 2 + 1].charAt(1))}
-			});
+				Matrix matrixB = new Basic2DMatrix(new double[][]{
+						{alphabet.indexOf(ctArray[i / 2].charAt(0)), alphabet.indexOf(ctArray[i / 2 + 1].charAt(0))},
+						{alphabet.indexOf(ctArray[i / 2].charAt(1)), alphabet.indexOf(ctArray[i / 2 + 1].charAt(1))}
+				});
 
-			double d = (matrixB.get(0, 0) * matrixB.get(1, 1) - matrixB.get(0, 1) * matrixB.get(1, 0)) % 26;
-			d = Math.pow(d, -1);
+				double d = (matrixB.get(0, 0) * matrixB.get(1, 1) - matrixB.get(0, 1) * matrixB.get(1, 0)) % 26;
+				d = Math.pow(d, -1);
 
-			Matrix adj = new Basic2DMatrix(new double[][] {
-					{matrixB.get(1, 1), matrixB.get(0, 1) * -1},
-					{matrixB.get(1, 0) * -1, matrixB.get(0, 0)}
-			});
+				Matrix adj = new Basic2DMatrix(new double[][]{
+						{matrixB.get(1, 1), matrixB.get(0, 1) * -1},
+						{matrixB.get(1, 0) * -1, matrixB.get(0, 0)}
+				});
 
-			Matrix inverse = adj.multiply(d);
+				Matrix inverse = adj.multiply(d);
 
-			Matrix needsMod = inverse.multiply(matrixA);
+				for (int x = 0; x < 2; x++) {
+					for (int y = 0; y < 2; y++) {
+						if (inverse.get(x, y) < 0) {
+							inverse.set(x, y, inverse.get(x, y) + 26);
+						}
+					}
+				}
 
-			key = new Basic2DMatrix(new double[][] {
-					{needsMod.get(0, 0) % 26, needsMod.get(0, 1) % 26},
-					{needsMod.get(1, 0) % 26, needsMod.get(1, 1) % 26}
-			});
+				Matrix needsMod = matrixA.multiply(inverse);
 
-			System.out.println("hasn't thrown yet");
+				key = new Basic2DMatrix(new double[][]{
+						{needsMod.get(0, 0) % 26, needsMod.get(0, 1) % 26},
+						{needsMod.get(1, 0) % 26, needsMod.get(1, 1) % 26}
+				});
+
+				for (int x = 0; x < 2; x++) {
+					for (int y = 0; y < 2; y++) {
+						if (key.get(x, y) < 0) {
+							key.set(x, y, key.get(x, y) + 26);
+						}
+					}
+				}
+				///////////////////////////////////////////////////////////////////////////////////////////////////////
 			} else {
+				///////////////////////////////////////////////////////////////////////////////////////////////////////
 				Matrix matrixA = new Basic2DMatrix(new double[][]{
 						{alphabet.indexOf(crib.charAt(1)), alphabet.indexOf(crib.charAt(3))},
 						{alphabet.indexOf(crib.charAt(2)), alphabet.indexOf(crib.charAt(4))}
@@ -92,19 +109,35 @@ public class HillCracker extends Cracker {
 				double d = (matrixB.get(0, 0) * matrixB.get(1, 1) - matrixB.get(0, 1) * matrixB.get(1, 0)) % 26;
 				d = Math.pow(d, -1);
 
-				Matrix adj = new Basic2DMatrix(new double[][] {
+				Matrix adj = new Basic2DMatrix(new double[][]{
 						{matrixB.get(1, 1), matrixB.get(0, 1) * -1},
 						{matrixB.get(1, 0) * -1, matrixB.get(0, 0)}
 				});
 
 				Matrix inverse = adj.multiply(d);
 
-				Matrix needsMod = inverse.multiply(matrixA);
+				for (int x = 0; x < 2; x++) {
+					for (int y = 0; y < 2; y++) {
+						if (inverse.get(x, y) < 0) {
+							inverse.set(x, y, inverse.get(x, y) + 26);
+						}
+					}
+				}
 
-				key = new Basic2DMatrix(new double[][] {
+				Matrix needsMod = matrixA.multiply(inverse);
+
+				key = new Basic2DMatrix(new double[][]{
 						{needsMod.get(0, 0) % 26, needsMod.get(0, 1) % 26},
 						{needsMod.get(1, 0) % 26, needsMod.get(1, 1) % 26}
 				});
+
+				for (int x = 0; x < 2; x++) {
+					for (int y = 0; y < 2; y++) {
+						if (key.get(x, y) < 0) {
+							key.set(x, y, key.get(x, y) + 26);
+						}
+					}
+				}
 			}
 
 			String thisDec = withKey(key, ct);
@@ -117,12 +150,19 @@ public class HillCracker extends Cracker {
 		}
 
 
-		return bestDec;
+		return Double.toString(bestKey.get(0, 0)) + "," + Double.toString(bestKey.get(0, 1)) +
+				"," + Double.toString(bestKey.get(1, 0)) + "," + Double.toString(bestKey.get(1, 0)) + ",";
 	}
 
 	@Override
-	public String solveWithKey(String key, String ct) {
-		return key;
+	public String solveWithKey(String ct, String key) {
+		String[] mt = key.split(",");
+		Matrix m = new Basic2DMatrix(new double[][] {
+				{Double.parseDouble(mt[0]), Double.parseDouble(mt[1])},
+				{Double.parseDouble(mt[2]), Double.parseDouble(mt[3])}
+		});
+
+		return withKey(m, ct);
 	}
 
 	private String withKey(Matrix key, String ct) {
@@ -132,26 +172,26 @@ public class HillCracker extends Cracker {
 			ct += "Z";
 		}
 		String[] ctArray = new String[ct.length() / 2];
-		for (int i = 0; i < ct.length(); i+= 2) {
+		for (int i = 0; i < ct.length(); i += 2) {
 			ctArray[i / 2] = "" + ct.charAt(i) + ct.charAt(i + 1);
 		}
 
 		StringBuilder answer = new StringBuilder();
 		for (int i = 0; i < ctArray.length; i++) {
-			Matrix a = new Basic2DMatrix(new double[][] {
+			Matrix a = new Basic2DMatrix(new double[][]{
 					{alphabet.indexOf(ctArray[i].charAt(0))},
 					{alphabet.indexOf(ctArray[i].charAt(1))}
 			});
 			Matrix b = key.multiply(a);
 
-			Matrix c = new Basic2DMatrix(new double[][] {
+			Matrix c = new Basic2DMatrix(new double[][]{
 					{Math.abs(b.get(0, 0) % 26)},
 					{Math.abs(b.get(1, 0) % 26)}
 			});
-			if(c.get(0, 0) < 0) {
+			if (c.get(0, 0) < 0) {
 				c.set(0, 0, c.get(0, 0) + 26);
 			}
-			if(c.get(1, 0) < 0) {
+			if (c.get(1, 0) < 0) {
 				c.set(1, 0, c.get(0, 0) + 26);
 			}
 

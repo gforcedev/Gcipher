@@ -10,7 +10,7 @@ public class VigenereCracker extends Cracker {
 	}
 
 
-	public String getKey(String ct) {
+	public String getKey (String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 		if (ct.length() > 500) {
 			ct = ct.substring(0,500);
