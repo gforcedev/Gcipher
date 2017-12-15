@@ -8,45 +8,45 @@ public class ColumnTransCracker extends Cracker {
 	}
 
 	public String getKey(String ct) {
-		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		ArrayList<String> decs = new ArrayList<>();
+		ct = ct.toUpperCase().replaceAll("[^A-Z_]", "");
+		String[] decs = new String[(int) Math.floor(ct.length() / 2)];
 		for (int i = 2; i < Math.floor(ct.length() / 2); i++) {
-//			decs.add(keyTest(ct, i));
-			System.out.println(keyTest(ct, i));
+			decs[i] = keyTest(ct, i);
 		}
 		String bestDec = "";
-		for (String dec : decs) {
-			if (scorer.quadgramScore(dec) > scorer.quadgramScore(bestDec)) {
-				bestDec = dec;
+		int bestI = 2;
+		for (int i = 2; i < decs.length; i++) {
+			if (scorer.quadgramScore(decs[i]) > scorer.quadgramScore(bestDec)) {
+				bestDec = decs[i];
+				bestI = i;
 			}
 		}
-		return bestDec;
+		return Integer.toString(bestI);
 	}
 
 	@Override
 	public String solveWithKey(String ct, String key) {
-		return "";
+		ct = ct.toUpperCase().replaceAll("[^A-Z_]", "");
+		return keyTest(ct, Integer.parseInt(key));
 	}
 
 
-	public int[] keyTest(String ct, int key) {
+	public String keyTest(String ct, int key) {
+		ct = ct.toUpperCase().replaceAll("[^A-Z_]", "");
 		String[] seperated = new String[key];
 		int ctlength = ct.length();
 		for (int i = 0; i < key; i++) {
 			seperated[i] = "";
 		}
 
-
 		for (int i = 0; i < ctlength; i++) {
 			seperated[i % key] += ct.charAt(i);
 		}
 
-		int[] toReturn = new int[key];
+		StringBuilder toReturn = new StringBuilder();
 		for (int i = 0; i < key; i++) {
-			toReturn[i] = i;
+			toReturn.append(seperated[i]);
 		}
-
-
-		return null;
+		return toReturn.toString();
 	}
 }

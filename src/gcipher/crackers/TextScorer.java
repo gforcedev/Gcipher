@@ -2,41 +2,42 @@ package gcipher.crackers;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class TextScorer {
 	private final float[] quadgrams;
 	private final HashMap<String, Float> monograms;
+
 	private String[] oneWords;
-	private long[] oneWordProbs;
+	private double[] oneWordProbs;
+	private List<String> oneWordList;
+
 	private String[] twoWords;
-	private long[] twoWordProbs;
+	private double[] twoWordProbs;
+	private List<String> twoWordList;
+
+	private double[] uWordProbs; //u is unseen
+	private double count = 1024908267229l;
 
 	public TextScorer() {
 		try {
 			quadgrams = loadQuadgrams();
 			monograms = loadMonograms();
 			loadOneWords();
-			loadTwoWords();
+//			loadTwoWords();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-
-	public String decrypt(String ct) {
-		return "";
-	}
-
-	public String solveWithKey(String ct, String key) {
-		return "";
-	}
-
 	public float quadgramScore(String str) {
+		str = str.toUpperCase().replaceAll("[^A-Z]", "");
 		float fitness = 0;
 		int length = str.length();
 		for (int i = 0; i < length - 3; i++) {
@@ -46,6 +47,7 @@ public class TextScorer {
 	}
 
 	public float monogramScore(String str) {
+		str = str.toUpperCase().replaceAll("[^A-Z]", "");
 		float fitness = 0;
 		int length = str.length();
 		for (int i = 0; i < length; i++) {
@@ -64,6 +66,44 @@ public class TextScorer {
 		}
 
 		return sum;
+	}
+
+	public String wordGuess(String str) {
+		str = str.toLowerCase().replaceAll("[^a-z]", "");
+		StringBuilder ret = new StringBuilder();
+
+		int maxWordLength = Math.min(20, str.length());
+
+		String[][] segs = segment(str, maxWordLength);
+		for (int i = 0; i < segs.length; i++) {
+
+		}
+
+		return ret.toString();
+	}
+
+	private String[][] segment(String str, int max) {
+		String[][] ret = new String[max][2];
+		for (int i = 0; i < max; i++) {
+			ret[i][0] = str.substring(0, i);
+			ret[i][1] = str.substring(i);
+		}
+		return ret;
+	}
+
+	private double getProbs(String[][] segs) {
+		double[] ret = new double[segs.length];
+		for (int i = 0; i < segs.length; i++) {
+			double first;
+			double second;
+			try {
+				first = oneWordProbs[oneWordList.lastIndexOf(segs[i][0])];
+			} catch(ArrayIndexOutOfBoundsException e) {
+				first = uWordProbs[segs[i][0].length()];
+			}
+			return first;
+		}
+		return 0d;
 	}
 
 	private float[] loadQuadgrams() throws IOException {
@@ -106,22 +146,28 @@ public class TextScorer {
 	}
 
 	public void loadOneWords() throws IOException {
-		URL url = TextScorer.class.getResource("1WordScores.txt");
+		URL url = TextScorer.class.getResource("count_1w.txt");
 		File file = new File(url.getPath());
 
-		List<String> lines = Files.readAllLines(Paths.get("1WordScores.txt"));
+		List<String> lines = Files.readAllLines(Paths.get("count_1w.txt"));
 
 		int linelength = lines.size();
 		String[] words = new String[linelength / 2];
-		long[] probabilities = new long[linelength / 2];
+		double[] probabilities = new double[linelength / 2];
 
 		for (int i = 0; i < (linelength / 2); i++) {
 			words[i] = lines.get(i * 2);
-			probabilities[i] = Long.parseLong(lines.get(i * 2 + 1));
+			probabilities[i] = Math.log10(Long.parseLong(lines.get(i * 2 + 1)));
 		}
 
 		oneWords = words;
 		oneWordProbs = probabilities;
+		oneWordList = Arrays.asList(oneWords);
+
+		uWordProbs = new double[50];
+		for (int i = 0; i < 50; i++) {
+			uWordProbs[i] = (10 / count * Math.pow(10, i));
+		}
 	}
 
 	public void loadTwoWords() throws IOException {
@@ -132,14 +178,15 @@ public class TextScorer {
 
 		int linelength = lines.size();
 		String[] words = new String[linelength / 2];
-		long[] probabilities = new long[linelength / 2];
+		double[] probabilities = new double[linelength / 2];
 
 		for (int i = 0; i < (linelength / 2); i++) {
 			words[i] = lines.get(i * 2);
-			probabilities[i] = Long.parseLong(lines.get(i * 2 + 1));
+			probabilities[i] = Math.log10(Long.parseLong(lines.get(i * 2 + 1)));
 		}
 
 		twoWords = words;
 		twoWordProbs = probabilities;
+		twoWordList = Arrays.asList(twoWords);
 	}
 }

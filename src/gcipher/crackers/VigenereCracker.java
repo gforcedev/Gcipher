@@ -18,7 +18,7 @@ public class VigenereCracker extends Cracker {
 		String bestKey = "";
 		float bestScore = Float.NEGATIVE_INFINITY;
 		for (int i = 0; i < 5; i++) {
-			for (int keyLength = 2; keyLength < 20; keyLength++) {
+			for (int keyLength = 7; keyLength < 8; keyLength++) {
 				String thisKey = keyTest(keyLength, ct);
 				String thisDec = solveWithKey(ct, thisKey);
 				float thisScore = scorer.quadgramScore(thisDec);
