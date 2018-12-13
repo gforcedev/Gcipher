@@ -12,78 +12,45 @@ public class VigenereCracker extends Cracker {
 
 	public String getKey (String ct) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
-		if (ct.length() > 500) {
-			ct = ct.substring(0,500);
-		}
+
 		String bestKey = "";
 		float bestScore = Float.NEGATIVE_INFINITY;
-		for (int i = 0; i < 5; i++) {
-			for (int keyLength = 7; keyLength < 8; keyLength++) {
-				String thisKey = keyTest(keyLength, ct);
-				String thisDec = solveWithKey(ct, thisKey);
-				float thisScore = scorer.quadgramScore(thisDec);
-				if (thisScore > bestScore) {
-					bestScore = thisScore;
-					bestKey = thisKey;
-				}
+
+		for (int i = 2; i < 30; i++) {
+			StringBuilder[] partials = new StringBuilder[i];
+
+			for (int x = 0; x < i; x++) {
+				partials[x] = new StringBuilder();
+			}
+			for (int x = 0; x < ct.length(); x++) {
+				partials[x % i].append(ct.charAt(x));
+			}
+
+
+			StringBuilder key = new StringBuilder();
+			for (int x = 0; x < i; x++) {
+				key.append(alphabet.charAt((Integer.parseInt(caesar.getKey(partials[x].toString())) ) % 26));
+			}
+			String keyString = key.toString();
+			float thisScore = scorer.quadgramScore(solveWithKey(ct, keyString));
+			if (thisScore > bestScore) {
+				bestKey = keyString;
+				bestScore = thisScore;
 			}
 		}
-
 		return bestKey;
 	}
 
 	@Override
-	public String solveWithKey(String key, String ct) {
-		return solveInternal(key, ct.toUpperCase().replaceAll("[^A-Z]", ""));
-	}
-
-
-	public String keyTest(int length, String ct) {
-		String[] separated = new String[length];
-		char[] key = new char[length];
-		int ctLength = ct.length();
-		for (int i = 0; i < length; i++) {
-			separated[i] = "";
-		}
-
-
-		for (int i = 0; i < ctLength; i++) {
-			separated[i % length] += ct.charAt(i);
-		}
-		for (int i = 0; i < length; i++) {
-			String keyi = caesar.getKey(separated[i]);
-			key[i] = alphabet.charAt(Integer.parseInt(keyi));
-		}
-		StringBuilder toReturn = new StringBuilder();
-
-		for (int i = 0; i < length; i++) {
-			toReturn.append(key[i]);
-		}
-
-
-		return toReturn.toString();
-	}
-
-
-	private String solveInternal(String ct, String key) {
-		key = key.toUpperCase().replaceAll("[^A-Z]", "");
+	public String solveWithKey(String ct, String key) {
 		ct = ct.toUpperCase().replaceAll("[^A-Z]", "");
 
-		char[] ctArray = ct.toCharArray();
-		char[] keyArray = key.toCharArray();
 		StringBuilder dec = new StringBuilder();
-
-		for (int i = 0; i < ctArray.length; i++) {
-			char original = ctArray[i];
-			ctArray[i] -= keyArray[i % keyArray.length] - 'A';
-			if (ctArray[i] < 'A') {
-				ctArray[i] += 26;
-			}
-			if(!Character.isAlphabetic(ctArray[i])) {
-				throw new RuntimeException("Poot!");
-			}
-			dec.append(ctArray[i]);
+		for (int i = 0; i < ct.length(); i++) {
+//			System.out.println(Math.floorMod((ct.charAt(i) - 'A') - (key.charAt(i % key.length()) - 'A'), 26));
+			dec.append((char) (Math.floorMod((ct.charAt(i) - 'A') - (key.charAt(i % key.length()) - 'A'), 26) + 'A'));
 		}
 		return dec.toString();
 	}
+
 }
